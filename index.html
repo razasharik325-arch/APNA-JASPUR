@@ -1157,24 +1157,29 @@ render();
 updateCart();
 
 function handleGoogleLogin(response) {
-  alert("Google Login सफल हुआ!");
-  console.log(response.credential);
+  if (response && response.credential) {
+    localStorage.setItem("googleLogin", "true");
+    alert("Google Login सफल हुआ!");
+  } else {
+    alert("Google Login नहीं हो पाया।");
+  }
 }
 
 window.addEventListener("load", function () {
+  const googleLogin = document.getElementById("googleLogin");
+
+  if (!googleLogin) return;
+
   google.accounts.id.initialize({
     client_id: GOOGLE_CLIENT_ID,
     callback: handleGoogleLogin
   });
 
-  google.accounts.id.renderButton(
-    document.getElementById("googleLogin"),
-    {
-      theme: "outline",
-      size: "large",
-      text: "signin_with"
-    }
-  );
+  google.accounts.id.renderButton(googleLogin, {
+    theme: "outline",
+    size: "large",
+    text: "signin_with"
+  });
 });
 
 
