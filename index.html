@@ -1,7 +1,1162 @@
-<!doctype html><html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#ff6b35"><title>Apna Jaspur food delivery</title><style>*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#fff7ed;color:#222}header{background:linear-gradient(135deg,#ff6b35,#ffb703);color:#fff;padding:20px;text-align:center;position:sticky;top:0;z-index:4}h1{margin:0;font-size:24px}header p{margin:5px 0}.tabs{display:flex;gap:8px;overflow:auto;padding:10px;background:#fff;position:sticky;top:83px;z-index:3}.tabs button{border:0;border-radius:22px;padding:9px 13px;white-space:nowrap}.tabs .on{background:#ff6b35;color:#fff}main{max-width:850px;margin:auto;padding:10px}.shop{background:#fff;border-radius:16px;margin:12px 0;padding:15px;box-shadow:0 3px 14px #0001}.shop h2{margin:0;color:#e65100}.item{display:flex;justify-content:space-between;gap:8px;align-items:center;border-top:1px solid #eee;padding:10px 0}.price{font-weight:bold}.add,.save,.login{background:#ff6b35;color:#fff;border:0;border-radius:18px;padding:8px 13px}.cart{position:fixed;right:14px;bottom:14px;background:#111;color:#fff;border:0;border-radius:30px;padding:14px 18px;z-index:6}#modal,#admin{display:none;position:fixed;inset:0;background:#0008;z-index:10}.box{background:#fff;max-width:620px;margin:5vh auto;padding:20px;border-radius:18px;max-height:90vh;overflow:auto}.box input,.box textarea,.box select{width:100%;padding:11px;margin:6px 0;border:1px solid #ddd;border-radius:9px}.close{float:right;border:0;border-radius:50%;padding:7px}.notice{background:#fff3cd;padding:10px;border-radius:10px;margin:10px 0;font-size:13px}</style></head><body><header><h1>🍴 Apna Jaspur Colorful Home</h1><p>Jaspur का अपना Food Menu & Delivery</p></header><nav class="tabs" id="tabs"></nav><main id="app"></main><button class="cart" onclick="openCart()">🛒 Cart <span id="count">0</span></button><button style="position:fixed;left:14px;bottom:14px;z-index:6;border:0;border-radius:24px;padding:10px 13px" onclick="openAdmin()">🔐 Login</button><div id="modal"><div class="box"><button class="close" onclick="closeCart()">✕</button><h2>आपका Order</h2><div id="cartItems"></div><p><b>Delivery:</b> ₹30 (0–1 km)</p><input id="custName" placeholder="नाम"><input id="custMobile" placeholder="मोबाइल नंबर"><textarea id="custAddress" placeholder="डिलीवरी पता"></textarea><button class="save" style="width:100%;padding:12px" onclick="sendOrder()">WhatsApp Order</button></div></div><div id="admin"><div class="box"><button class="close" onclick="closeAdmin()">✕</button><h2>🔐 Owner / Shop Login</h2><div class="notice">यह demo UI है। Production में server-side authentication/database लगाना जरूरी है।</div><select id="shopSelect"></select><input id="pass" type="password" placeholder="Password"><button class="login" onclick="login()">Login</button><div id="panel"></div></div></div><script>const shops=[{"name": "Uvesh Chicken and Chicken Darbar", "cat": "Chicken", "items": [{"name": "Chicken Fry (Full)", "price": "₹360"}, {"name": "Chicken Fry (Half)", "price": "₹180"}]}, {"name": "Guddu Bhai Tikki Wale", "cat": "Tikki", "items": [{"name": "Bade Ki Tikki", "price": "₹12"}, {"name": "Fry Chicken", "price": "₹360"}, {"name": "Paya", "price": "₹120"}, {"name": "Rumali Roti", "price": "₹6"}]}, {"name": "Albaik Chicken Pakodi Center", "cat": "Chicken", "items": [{"name": "Chicken Fry", "price": "₹360"}]}, {"name": "Al Arabic Restaurant", "cat": "Chicken", "items": [{"name": "Al Faham Mandi (Full / Half)", "price": "₹750 / ₹450"}, {"name": "Chicken Afghani (Full / Half / Quarter)", "price": "₹750 / ₹380 / ₹200"}, {"name": "Chicken Changezi (Full / Half / Quarter)", "price": "₹750 / ₹380 / ₹200"}, {"name": "Chicken Badami (Full / Half / Quarter)", "price": "₹750 / ₹380 / ₹200"}, {"name": "Chicken Kali Mirch (Full / Half / Quarter)", "price": "₹750 / ₹380 / ₹200"}, {"name": "Chicken Tikka (Full / Half / Quarter)", "price": "₹750 / ₹380 / ₹200"}, {"name": "Chicken Kabab Dry (2 Pieces)", "price": "₹100"}, {"name": "Chicken Kabab Gravy (2 Pieces)", "price": "₹130"}, {"name": "Mutton Nahari (Full / Half / Quarter)", "price": "₹1000 / ₹500 / ₹250"}, {"name": "Kadai Paneer (Full / Half)", "price": "₹400 / ₹200"}, {"name": "Shahi Paneer (Full / Half)", "price": "₹400 / ₹200"}, {"name": "Tanduri Roti", "price": "₹10"}, {"name": "Butter Roti", "price": "₹12"}, {"name": "Water", "price": "On MRP"}, {"name": "Chocolate Kunafa", "price": "₹400"}, {"name": "Cheese Kunafa", "price": "₹250"}]}, {"name": "Makka Hotel", "cat": "Hotel", "items": [{"name": "Bade Ki Nahari", "price": "₹140"}, {"name": "Bade Ka White Keema", "price": "₹120"}, {"name": "Bade Red Korma", "price": "₹120"}, {"name": "Bade Ka Achari Korma", "price": "₹120"}, {"name": "Bade Ka White Korma", "price": "₹120"}, {"name": "Paya", "price": "₹130"}, {"name": "Bade Ki Biryani (Full / Half)", "price": "₹240 / ₹120"}, {"name": "Tanduri Roti", "price": "₹6"}, {"name": "Bisleri Water", "price": "₹20"}]}, {"name": "Alam Biryani Center", "cat": "Biryani", "items": [{"name": "Chicken Biryani (Full)", "price": "₹200"}, {"name": "Chicken Biryani (Half)", "price": "₹100"}, {"name": "Chicken Biryani (Quarter)", "price": "₹60"}]}, {"name": "Tahelka Haleem Center", "cat": "Biryani", "items": [{"name": "Haleem Biryani (Full)", "price": "₹50"}, {"name": "Haleem Biryani (Half)", "price": "₹30"}]}, {"name": "Shahid Chicken Shope", "cat": "Chicken", "items": [{"name": "Special Chicken Fry (Full)", "price": "₹380"}, {"name": "Special Chicken Fry (Half)", "price": "₹190"}]}, {"name": "Bombay Bakers", "cat": "Bakery", "items": [{"name": "Chicken Burger", "price": "₹69"}, {"name": "Large Pizza", "price": "₹179"}, {"name": "Special Patties", "price": "₹25"}, {"name": "Hell", "price": "₹70"}, {"name": "Red Bull", "price": "₹135"}, {"name": "Thums Up / Fanta / Coca Cola / Campa / Water / Sting", "price": "On MRP"}]}, {"name": "Al-Taj Restaurant", "cat": "Chicken", "items": [{"name": "Chicken Afghani (Q/H/F)", "price": "₹200 / ₹380 / ₹750"}, {"name": "Chicken Makhani (H/F)", "price": "₹380 / ₹750"}, {"name": "Chicken Lababdar (Q/H/F)", "price": "₹200 / ₹380 / ₹750"}, {"name": "Chicken Masala (H/F)", "price": "₹380 / ₹750"}, {"name": "Chicken Rara (Q/H/F)", "price": "₹230 / ₹400 / ₹780"}, {"name": "Butter Chicken (Q/H/F)", "price": "₹200 / ₹380 / ₹750"}, {"name": "Chicken Kali Mirch (Q/H/F)", "price": "₹200 / ₹380 / ₹750"}, {"name": "Kadhai Chicken (Q/H/F)", "price": "₹200 / ₹380 / ₹750"}, {"name": "Chicken Changezi (Q/H/F)", "price": "₹200 / ₹380 / ₹750"}, {"name": "Chicken Malai Tikka Gravy (Q/H/F)", "price": "₹220 / ₹400 / ₹780"}, {"name": "Chicken Tikka Masala (Q/H/F)", "price": "₹200 / ₹380 / ₹750"}, {"name": "Kabsa (H/F)", "price": "₹430 / ₹860"}, {"name": "Chicken Tandoori (H/F)", "price": "₹250 / ₹500"}, {"name": "Chicken Fry (H/F)", "price": "₹210 / ₹400"}, {"name": "Chicken Mandi (H/F)", "price": "₹999 / ₹1999"}, {"name": "Fried Chicken Lollipop", "price": "₹130 (Q) / ₹250 / ₹500"}, {"name": "Lollipop Makhni (H/F)", "price": "₹380 / ₹750"}, {"name": "Al Faham (Full)", "price": "₹600"}, {"name": "Tangdi Leg Piece", "price": "₹70 / pc"}, {"name": "Full Tangdi", "price": "₹140 / pc"}, {"name": "Chicken Seekh Kabab (Dry / Gravy)", "price": "₹40 / ₹70"}, {"name": "Chicken Boti Kabab (Dry / Gravy)", "price": "₹40 / ₹70"}, {"name": "Shahi Paneer (H/F)", "price": "₹250 / ₹480"}, {"name": "Kadhai Paneer (H/F)", "price": "₹250 / ₹480"}, {"name": "Butter Paneer (H/F)", "price": "₹250 / ₹480"}, {"name": "Laccha Paratha", "price": "₹40"}, {"name": "Simple Naan", "price": "₹10"}, {"name": "Butter Naan", "price": "₹12"}, {"name": "Garlic Naan", "price": "₹60"}]}, {"name": "Arshad Kabab Shope", "cat": "Kabab", "items": [{"name": "Bade Ke Kabab", "price": "₹15"}, {"name": "Rumali Roti", "price": "₹6"}]}, {"name": "Attari Coffee Corner", "cat": "Drinks", "items": [{"name": "Coffee", "price": "₹30"}, {"name": "Special Tea", "price": "₹20"}, {"name": "Til Ke Laddu", "price": "₹16 / piece"}]}, {"name": "Afzalgarh Ki Mashhur Makhni Lassi", "cat": "Drinks", "items": [{"name": "Lassi (Mawa + Malai + Badam + Kishmish)", "price": "₹70"}]}, {"name": "Orhan Shawarma House", "cat": "Shawarma", "items": [{"name": "Buff Nalli", "price": "₹140"}, {"name": "Buff Turkey", "price": "₹110"}, {"name": "Buff Lebanese", "price": "₹90"}, {"name": "Chicken Lebanese", "price": "₹75"}, {"name": "Chicken Turkish", "price": "₹90"}, {"name": "Musa Khan", "price": "₹170"}]}];let cart=[];function renderTabs(){tabs.innerHTML=['All',...new Set(shops.map(s=>s.cat))].map((c,i)=>`<button class="${i?'':'on'}" onclick="filterCat('${c}',this)">${c==='All'?'सभी':c}</button>`).join('')}function render(list=shops){app.innerHTML=list.map(s=>`<section class="shop"><h2>${s.name}</h2>${s.name==='Al-Taj Restaurant'?'<small>In front of Muslim Fund, Afzalgarh Road, Jaspur</small>':''}${s.items.map(x=>`<div class="item"><span>${x.name}<br><span class="price">${x.price}</span></span><button class="add" onclick='add("${s.name.replaceAll('"','&quot;')}","${x.name.replaceAll('"','&quot;')}","${x.price}")'>+ Add</button></div>`).join('')}</section>`).join('')}function filterCat(c,b){document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('on'));b.classList.add('on');render(c==='All'?shops:shops.filter(s=>s.cat===c))}function add(shop,item,price){cart.push({shop,item,price});count.textContent=cart.length}function openCart(){modal.style.display='block';cartItems.innerHTML=cart.length?cart.map(x=>`<p>${x.shop} — ${x.item} — ${x.price}</p>`).join(''):'<p>Cart खाली है।</p>'}function closeCart(){modal.style.display='none'}   function sendOrder(){if(!cart.length)return alert('पहले item add करें');let  t='Apna Jaspur Food Delivery Order\n';     
-';cart.forEach(x=>t+=x.shop+' - '+x.item+' '+x.price+'
-');t+='Delivery ₹30
-Name: '+custName.value+'
-Mobile: '+custMobile.value+'
-Address: '+custAddress.value;location.href='https://wa.me/?text='+encodeURIComponent(t)}function openAdmin(){admin.style.display='block';shopSelect.innerHTML='<option value="owner">Owner Admin</option>'+shops.map((s,i)=>`<option value="${i}">${s.name}</option>`).join('')}function closeAdmin(){admin.style.display='none'}function login(){let v=shopSelect.value;panel.innerHTML='<h3>Logged in: '+(v==='owner'?'Owner Admin':shops[v].name)+'</h3><p>'+ (v==='owner'?'सभी दुकानों का management, disable/ban और force logout यहाँ जोड़ा जाएगा।':'केवल अपनी दुकान के menu/rates edit करने का panel यहाँ जोड़ा जाएगा।')+'</p><button class="save" onclick="panel.innerHTML=''">Logout</button>'}renderTabs();render();</script></body></html>
-h
+
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#ff6b35">
+<title>Apna Jaspur Colorful Home</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#fff7ed;
+  color:#222;
+}
+header{
+  background:linear-gradient(135deg,#ff6b35,#ffb703);
+  color:#fff;
+  padding:20px;
+  text-align:center;
+  position:sticky;
+  top:0;
+  z-index:4;
+}
+h1{margin:0;font-size:24px}
+header p{margin:6px 0 0}
+
+.tabs{
+  display:flex;
+  gap:8px;
+  overflow:auto;
+  padding:10px;
+  background:#fff;
+  position:sticky;
+  top:88px;
+  z-index:3;
+}
+.tabs button{
+  border:0;
+  border-radius:22px;
+  padding:9px 14px;
+  white-space:nowrap;
+  background:#f1f1f1;
+}
+.tabs .on{
+  background:#ff6b35;
+  color:#fff;
+}
+
+main{
+  max-width:850px;
+  margin:auto;
+  padding:10px;
+}
+
+.shop{
+  background:#fff;
+  border-radius:16px;
+  margin:12px 0;
+  padding:15px;
+  box-shadow:0 3px 14px #0001;
+}
+.shop h2{
+  margin:0 0 5px;
+  color:#e65100;
+}
+.shop small{
+  display:block;
+  margin-bottom:8px;
+  color:#666;
+}
+
+.item{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:center;
+  border-top:1px solid #eee;
+  padding:11px 0;
+}
+.item-name{
+  font-weight:500;
+}
+.price{
+  font-weight:bold;
+  color:#333;
+  display:inline-block;
+  margin-top:3px;
+}
+.add,.save,.login,.business{
+  background:#ff6b35;
+  color:#fff;
+  border:0;
+  border-radius:18px;
+  padding:8px 13px;
+  cursor:pointer;
+}
+.add:active,.save:active,.login:active,.business:active{
+  transform:scale(.96);
+}
+
+.cart{
+  position:fixed;
+  right:14px;
+  bottom:14px;
+  background:#111;
+  color:#fff;
+  border:0;
+  border-radius:30px;
+  padding:14px 18px;
+  z-index:6;
+  cursor:pointer;
+  font-size:15px;
+}
+
+.loginBtn{
+  position:fixed;
+  left:14px;
+  bottom:14px;
+  z-index:6;
+  border:0;
+  border-radius:24px;
+  padding:10px 13px;
+  background:#fff;
+  box-shadow:0 2px 10px #0002;
+  cursor:pointer;
+}
+
+.businessBtn{
+  display:block;
+  margin:15px auto 80px;
+  padding:12px 18px;
+  border:0;
+  border-radius:25px;
+  background:#198754;
+  color:#fff;
+  font-size:15px;
+  cursor:pointer;
+}
+
+#modal,#admin,#businessModal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:#0008;
+  z-index:10;
+  padding:10px;
+}
+
+.box{
+  background:#fff;
+  max-width:620px;
+  margin:5vh auto;
+  padding:20px;
+  border-radius:18px;
+  max-height:90vh;
+  overflow:auto;
+}
+
+.close{
+  float:right;
+  border:0;
+  border-radius:50%;
+  padding:7px 10px;
+  cursor:pointer;
+}
+
+.box input,
+.box textarea,
+.box select{
+  width:100%;
+  padding:11px;
+  margin:6px 0;
+  border:1px solid #ddd;
+  border-radius:9px;
+  font-size:15px;
+}
+
+.notice{
+  background:#fff3cd;
+  padding:10px;
+  border-radius:10px;
+  margin:10px 0;
+  font-size:13px;
+}
+
+.cart-row{
+  border-bottom:1px solid #eee;
+  padding:10px 0;
+}
+
+.qty{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-top:6px;
+}
+
+.qty button{
+  border:0;
+  background:#eee;
+  border-radius:50%;
+  width:30px;
+  height:30px;
+  cursor:pointer;
+  font-size:17px;
+}
+
+.remove{
+  border:0;
+  background:#ffe1e1;
+  color:#c00;
+  border-radius:8px;
+  padding:5px 8px;
+  cursor:pointer;
+}
+
+.total{
+  background:#fff7ed;
+  padding:12px;
+  border-radius:12px;
+  margin:12px 0;
+}
+
+.empty{
+  text-align:center;
+  padding:25px;
+  color:#777;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🍴 Apna Jaspur Colorful Home</h1>
+  <p>Jaspur का अपना Food Menu & Delivery</p>
+</header>
+
+<nav class="tabs" id="tabs"></nav>
+
+<main id="app"></main>
+
+<button class="businessBtn" onclick="openBusiness()">
+  🏪 अपना Business Add करें
+</button>
+
+<button class="cart" onclick="openCart()">
+  🛒 Cart <span id="count">0</span>
+</button>
+
+<button class="loginBtn" onclick="openAdmin()">
+  🔐 Login
+</button>
+
+
+<!-- CART -->
+<div id="modal">
+  <div class="box">
+    <button class="close" onclick="closeCart()">✕</button>
+
+    <h2>🛒 आपका Order</h2>
+
+    <div id="cartItems"></div>
+
+    <div class="total">
+      <p><b>Food Total:</b> ₹<span id="foodTotal">0</span></p>
+      <p><b>Delivery:</b> ₹30 (0–1 km)</p>
+      <p><b>Total:</b> ₹<span id="grandTotal">30</span></p>
+    </div>
+
+    <input id="custName" placeholder="नाम">
+    <input id="custMobile" placeholder="मोबाइल नंबर" inputmode="numeric">
+    <textarea id="custAddress" placeholder="डिलीवरी पता"></textarea>
+
+    <button
+      class="save"
+      style="width:100%;padding:13px"
+      onclick="sendOrder()">
+      📲 WhatsApp Order
+    </button>
+  </div>
+</div>
+
+
+<!-- LOGIN / ADMIN -->
+<div id="admin">
+  <div class="box">
+
+    <button class="close" onclick="closeAdmin()">✕</button>
+
+    <h2>🔐 Owner / Shop Login</h2>
+
+    <div class="notice">
+      अभी यह demo login है। असली Mobile OTP और सुरक्षित अलग-अलग Shop Admin
+      बाद में database/authentication से जोड़ा जाएगा।
+    </div>
+
+    <select id="shopSelect"></select>
+
+    <input
+      id="pass"
+      type="password"
+      placeholder="Demo Password">
+
+    <button class="login" onclick="login()">
+      Login
+    </button>
+
+    <div id="panel"></div>
+
+  </div>
+</div>
+
+
+<!-- BUSINESS ADD -->
+<div id="businessModal">
+  <div class="box">
+
+    <button class="close" onclick="closeBusiness()">✕</button>
+
+    <h2>🏪 अपना Business Add करें</h2>
+
+    <div class="notice">
+      अपना business भेजें। पहले Owner approval होगा, उसके बाद दुकान live की जाएगी।
+    </div>
+
+    <input id="businessName" placeholder="दुकान / Business का नाम">
+
+    <input id="businessOwner" placeholder="मालिक का नाम">
+
+    <input
+      id="businessMobile"
+      placeholder="मोबाइल नंबर"
+      inputmode="numeric">
+
+    <input id="businessAddress" placeholder="दुकान का पता">
+
+    <select id="businessCategory">
+      <option value="">Category चुनें</option>
+      <option>Chicken</option>
+      <option>Tikki</option>
+      <option>Hotel</option>
+      <option>Biryani</option>
+      <option>Bakery</option>
+      <option>Kabab</option>
+      <option>Drinks</option>
+      <option>Shawarma</option>
+      <option>Other</option>
+    </select>
+
+    <textarea
+      id="businessMenu"
+      placeholder="अपनी दुकान के Items और Prices लिखें"></textarea>
+
+    <button
+      class="business"
+      style="width:100%;padding:13px"
+      onclick="submitBusiness()">
+      📤 Business Submit करें
+    </button>
+
+  </div>
+</div>
+
+
+<script>
+
+/* =========================
+   SHOP DATA
+========================= */
+
+const shops = [
+
+{
+name:"Uvesh Chicken and Chicken Darbar",
+cat:"Chicken",
+items:[
+{name:"Chicken Fry (Full)",price:"₹360"},
+{name:"Chicken Fry (Half)",price:"₹180"}
+]
+},
+
+{
+name:"Guddu Bhai Tikki Wale",
+cat:"Tikki",
+items:[
+{name:"Bade Ki Tikki",price:"₹12"},
+{name:"Fry Chicken",price:"₹360"},
+{name:"Paya",price:"₹120"},
+{name:"Rumali Roti",price:"₹6"}
+]
+},
+
+{
+name:"Albaik Chicken Pakodi Center",
+cat:"Chicken",
+items:[
+{name:"Chicken Fry",price:"₹360"}
+]
+},
+
+{
+name:"Al Arabic Restaurant",
+cat:"Chicken",
+items:[
+{name:"Al Faham Mandi (Full / Half)",price:"₹750 / ₹450"},
+{name:"Chicken Afghani (Full / Half / Quarter)",price:"₹750 / ₹380 / ₹200"},
+{name:"Chicken Changezi (Full / Half / Quarter)",price:"₹750 / ₹380 / ₹200"},
+{name:"Chicken Badami (Full / Half / Quarter)",price:"₹750 / ₹380 / ₹200"},
+{name:"Chicken Kali Mirch (Full / Half / Quarter)",price:"₹750 / ₹380 / ₹200"},
+{name:"Chicken Tikka (Full / Half / Quarter)",price:"₹750 / ₹380 / ₹200"},
+{name:"Chicken Kabab Dry (2 Pieces)",price:"₹100"},
+{name:"Chicken Kabab Gravy (2 Pieces)",price:"₹130"},
+{name:"Mutton Nahari (Full / Half / Quarter)",price:"₹1000 / ₹500 / ₹250"},
+{name:"Kadai Paneer (Full / Half)",price:"₹400 / ₹200"},
+{name:"Shahi Paneer (Full / Half)",price:"₹400 / ₹200"},
+{name:"Tanduri Roti",price:"₹10"},
+{name:"Butter Roti",price:"₹12"},
+{name:"Water",price:"On MRP"},
+{name:"Chocolate Kunafa",price:"₹400"},
+{name:"Cheese Kunafa",price:"₹250"}
+]
+},
+
+{
+name:"Makka Hotel",
+cat:"Hotel",
+items:[
+{name:"Bade Ki Nahari",price:"₹140"},
+{name:"Bade Ka White Keema",price:"₹120"},
+{name:"Bade Red Korma",price:"₹120"},
+{name:"Bade Ka Achari Korma",price:"₹120"},
+{name:"Bade Ka White Korma",price:"₹120"},
+{name:"Paya",price:"₹130"},
+{name:"Bade Ki Biryani (Full / Half)",price:"₹240 / ₹120"},
+{name:"Tanduri Roti",price:"₹6"},
+{name:"Bisleri Water",price:"₹20"}
+]
+},
+
+{
+name:"Alam Biryani Center",
+cat:"Biryani",
+items:[
+{name:"Chicken Biryani (Full)",price:"₹200"},
+{name:"Chicken Biryani (Half)",price:"₹100"},
+{name:"Chicken Biryani (Quarter)",price:"₹60"}
+]
+},
+
+{
+name:"Tahelka Haleem Center",
+cat:"Biryani",
+items:[
+{name:"Haleem Biryani (Full)",price:"₹50"},
+{name:"Haleem Biryani (Half)",price:"₹30"}
+]
+},
+
+{
+name:"Shahid Chicken Shope",
+cat:"Chicken",
+items:[
+{name:"Special Chicken Fry (Full)",price:"₹380"},
+{name:"Special Chicken Fry (Half)",price:"₹190"}
+]
+},
+
+{
+name:"Bombay Bakers",
+cat:"Bakery",
+items:[
+{name:"Chicken Burger",price:"₹69"},
+{name:"Large Pizza",price:"₹179"},
+{name:"Special Patties",price:"₹25"},
+{name:"Hell",price:"₹70"},
+{name:"Red Bull",price:"₹135"},
+{name:"Thums Up / Fanta / Coca Cola / Campa / Water / Sting",price:"On MRP"}
+]
+},
+
+{
+name:"Al-Taj Restaurant",
+cat:"Chicken",
+address:"In front of Muslim Fund, Afzalgarh Road, Jaspur",
+items:[
+{name:"Chicken Afghani (Q/H/F)",price:"₹200 / ₹380 / ₹750"},
+{name:"Chicken Makhani (H/F)",price:"₹380 / ₹750"},
+{name:"Chicken Lababdar (Q/H/F)",price:"₹200 / ₹380 / ₹750"},
+{name:"Chicken Masala (H/F)",price:"₹380 / ₹750"},
+{name:"Chicken Rara (Q/H/F)",price:"₹230 / ₹400 / ₹780"},
+{name:"Butter Chicken (Q/H/F)",price:"₹200 / ₹380 / ₹750"},
+{name:"Chicken Kali Mirch (Q/H/F)",price:"₹200 / ₹380 / ₹750"},
+{name:"Kadhai Chicken (Q/H/F)",price:"₹200 / ₹380 / ₹750"},
+{name:"Chicken Changezi (Q/H/F)",price:"₹200 / ₹380 / ₹750"},
+{name:"Chicken Malai Tikka Gravy (Q/H/F)",price:"₹220 / ₹400 / ₹780"},
+{name:"Chicken Tikka Masala (Q/H/F)",price:"₹200 / ₹380 / ₹750"},
+{name:"Kabsa (H/F)",price:"₹430 / ₹860"},
+{name:"Chicken Tandoori (H/F)",price:"₹250 / ₹500"},
+{name:"Chicken Fry (H/F)",price:"₹210 / ₹400"},
+{name:"Chicken Mandi (H/F)",price:"₹999 / ₹1999"},
+{name:"Fried Chicken Lollipop",price:"₹130 (Q) / ₹250 / ₹500"},
+{name:"Lollipop Makhni (H/F)",price:"₹380 / ₹750"},
+{name:"Al Faham (Full)",price:"₹600"},
+{name:"Tangdi Leg Piece",price:"₹70 / pc"},
+{name:"Full Tangdi",price:"₹140 / pc"},
+{name:"Chicken Seekh Kabab (Dry / Gravy)",price:"₹40 / ₹70"},
+{name:"Chicken Boti Kabab (Dry / Gravy)",price:"₹40 / ₹70"},
+{name:"Shahi Paneer (H/F)",price:"₹250 / ₹480"},
+{name:"Kadhai Paneer (H/F)",price:"₹250 / ₹480"},
+{name:"Butter Paneer (H/F)",price:"₹250 / ₹480"},
+{name:"Laccha Paratha",price:"₹40"},
+{name:"Simple Naan",price:"₹10"},
+{name:"Butter Naan",price:"₹12"},
+{name:"Garlic Naan",price:"₹60"}
+]
+},
+
+{
+name:"Arshad Kabab Shope",
+cat:"Kabab",
+items:[
+{name:"Bade Ke Kabab",price:"₹15"},
+{name:"Rumali Roti",price:"₹6"}
+]
+},
+
+{
+name:"Attari Coffee Corner",
+cat:"Drinks",
+items:[
+{name:"Coffee",price:"₹30"},
+{name:"Special Tea",price:"₹20"},
+{name:"Til Ke Laddu",price:"₹16 / piece"}
+]
+},
+
+{
+name:"Afzalgarh Ki Mashhur Makhni Lassi",
+cat:"Drinks",
+items:[
+{name:"Lassi (Mawa + Malai + Badam + Kishmish)",price:"₹70"}
+]
+},
+
+{
+name:"Orhan Shawarma House",
+cat:"Shawarma",
+items:[
+{name:"Buff Nalli",price:"₹140"},
+{name:"Buff Turkey",price:"₹110"},
+{name:"Buff Lebanese",price:"₹90"},
+{name:"Chicken Lebanese",price:"₹75"},
+{name:"Chicken Turkish",price:"₹90"},
+{name:"Musa Khan",price:"₹170"}
+]
+}
+
+];
+
+
+/* =========================
+   CART
+========================= */
+
+let cart=[];
+
+
+/* =========================
+   SAFE HTML
+========================= */
+
+function esc(text){
+  return String(text)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+
+/* =========================
+   PRICE
+========================= */
+
+function getPrice(price){
+
+  const matches=String(price).match(/\d+/g);
+
+  if(!matches || !matches.length){
+    return 0;
+  }
+
+  return Number(matches[0]);
+}
+
+
+/* =========================
+   TABS
+========================= */
+
+function renderTabs(){
+
+  const cats=["All",...new Set(shops.map(s=>s.cat))];
+
+  document.getElementById("tabs").innerHTML=cats.map((c,i)=>`
+    <button
+      class="${i===0?"on":""}"
+      onclick="filterCat('${esc(c)}',this)">
+      ${c==="All"?"सभी":esc(c)}
+    </button>
+  `).join("");
+}
+
+
+/* =========================
+   SHOP RENDER
+========================= */
+
+function render(list=shops){
+
+  const app=document.getElementById("app");
+
+  app.innerHTML=list.map((s,si)=>`
+
+    <section class="shop">
+
+      <h2>${esc(s.name)}</h2>
+
+      ${s.address
+        ? `<small>📍 ${esc(s.address)}</small>`
+        : ""}
+
+      ${s.items.map((x,ii)=>`
+
+        <div class="item">
+
+          <span>
+            <span class="item-name">
+              ${esc(x.name)}
+            </span>
+            <br>
+            <span class="price">
+              ${esc(x.price)}
+            </span>
+          </span>
+
+          <button
+            class="add"
+            onclick="addItem(${si},${ii})">
+            + Add
+          </button>
+
+        </div>
+
+      `).join("")}
+
+    </section>
+
+  `).join("");
+}
+
+
+/* =========================
+   CATEGORY FILTER
+========================= */
+
+function filterCat(category,button){
+
+  document
+    .querySelectorAll(".tabs button")
+    .forEach(x=>x.classList.remove("on"));
+
+  button.classList.add("on");
+
+  if(category==="All"){
+    render(shops);
+  }else{
+    render(shops.filter(s=>s.cat===category));
+  }
+}
+
+
+/* =========================
+   ADD TO CART
+========================= */
+
+function addItem(shopIndex,itemIndex){
+
+  const shop=shops[shopIndex];
+  const item=shop.items[itemIndex];
+
+  const existing=cart.find(
+    x=>x.shop===shop.name && x.item===item.name
+  );
+
+  if(existing){
+
+    existing.qty++;
+
+  }else{
+
+    cart.push({
+      shop:shop.name,
+      item:item.name,
+      price:item.price,
+      qty:1
+    });
+
+  }
+
+  updateCart();
+
+  alert(item.name+" Cart में जोड़ दिया गया");
+}
+
+
+/* =========================
+   UPDATE CART
+========================= */
+
+function updateCart(){
+
+  const totalQty=cart.reduce(
+    (sum,x)=>sum+x.qty,
+    0
+  );
+
+  document.getElementById("count").textContent=totalQty;
+}
+
+
+/* =========================
+   OPEN CART
+========================= */
+
+function openCart(){
+
+  document.getElementById("modal").style.display="block";
+
+  renderCart();
+}
+
+
+/* =========================
+   RENDER CART
+========================= */
+
+function renderCart(){
+
+  const box=document.getElementById("cartItems");
+
+  if(!cart.length){
+
+    box.innerHTML=`
+      <div class="empty">
+        🛒 Cart खाली है।
+        <br><br>
+        किसी item पर + Add दबाएँ।
+      </div>
+    `;
+
+    document.getElementById("foodTotal").textContent="0";
+    document.getElementById("grandTotal").textContent="30";
+
+    return;
+  }
+
+  let foodTotal=0;
+
+  box.innerHTML=cart.map((x,index)=>{
+
+    const onePrice=getPrice(x.price);
+    const itemTotal=onePrice*x.qty;
+
+    foodTotal+=itemTotal;
+
+    return `
+      <div class="cart-row">
+
+        <b>${esc(x.item)}</b>
+
+        <br>
+
+        <small>${esc(x.shop)}</small>
+
+        <br>
+
+        <span>
+          ${esc(x.price)}
+        </span>
+
+        <div class="qty">
+
+          <button onclick="changeQty(${index},-1)">
+            −
+          </button>
+
+          <b>${x.qty}</b>
+
+          <button onclick="changeQty(${index},1)">
+            +
+          </button>
+
+          <button
+            class="remove"
+            onclick="removeItem(${index})">
+            हटाएँ
+          </button>
+
+        </div>
+
+      </div>
+    `;
+
+  }).join("");
+
+  document.getElementById("foodTotal").textContent=foodTotal;
+
+  document.getElementById("grandTotal").textContent=
+    foodTotal+30;
+}
+
+
+/* =========================
+   CHANGE QUANTITY
+========================= */
+
+function changeQty(index,amount){
+
+  if(!cart[index]) return;
+
+  cart[index].qty+=amount;
+
+  if(cart[index].qty<=0){
+
+    cart.splice(index,1);
+
+  }
+
+  updateCart();
+  renderCart();
+}
+
+
+/* =========================
+   REMOVE ITEM
+========================= */
+
+function removeItem(index){
+
+  cart.splice(index,1);
+
+  updateCart();
+  renderCart();
+}
+
+
+/* =========================
+   CLOSE CART
+========================= */
+
+function closeCart(){
+
+  document.getElementById("modal").style.display="none";
+}
+
+
+/* =========================
+   SEND WHATSAPP ORDER
+========================= */
+
+function sendOrder(){
+
+  if(!cart.length){
+
+    alert("पहले item Add करें");
+
+    return;
+  }
+
+  const name=
+    document.getElementById("custName").value.trim();
+
+  const mobile=
+    document.getElementById("custMobile").value.trim();
+
+  const address=
+    document.getElementById("custAddress").value.trim();
+
+  if(!name){
+
+    alert("कृपया अपना नाम लिखें");
+
+    return;
+  }
+
+  if(!mobile){
+
+    alert("कृपया मोबाइल नंबर लिखें");
+
+    return;
+  }
+
+  if(!address){
+
+    alert("कृपया डिलीवरी पता लिखें");
+
+    return;
+  }
+
+  let foodTotal=0;
+
+  let message=
+`🍴 Apna Jaspur Food Delivery Order
+
+`;
+
+  cart.forEach(x=>{
+
+    const price=getPrice(x.price);
+
+    foodTotal+=price*x.qty;
+
+    message+=
+`${x.shop}
+${x.item}
+Price: ${x.price}
+Qty: ${x.qty}
+
+`;
+
+  });
+
+  const grandTotal=foodTotal+30;
+
+  message+=
+`Food Total: ₹${foodTotal}
+Delivery: ₹30
+TOTAL: ₹${grandTotal}
+
+Name: ${name}
+Mobile: ${mobile}
+Address: ${address}`;
+
+  /*
+    अभी WhatsApp generic link है।
+    बाद में तुम्हारा business WhatsApp number
+    यहाँ डाल सकते हैं:
+    https://wa.me/91XXXXXXXXXX
+  */
+
+  const whatsappUrl=
+    "https://wa.me/?text="+
+    encodeURIComponent(message);
+
+  window.location.href=whatsappUrl;
+}
+
+
+/* =========================
+   ADMIN
+========================= */
+
+function openAdmin(){
+
+  document.getElementById("admin").style.display="block";
+
+  const select=
+    document.getElementById("shopSelect");
+
+  select.innerHTML=
+    `<option value="owner">Owner Admin</option>`+
+    shops.map((s,i)=>
+      `<option value="${i}">
+        ${esc(s.name)}
+      </option>`
+    ).join("");
+
+}
+
+
+function closeAdmin(){
+
+  document.getElementById("admin").style.display="none";
+
+}
+
+
+function login(){
+
+  const value=
+    document.getElementById("shopSelect").value;
+
+  const panel=
+    document.getElementById("panel");
+
+  if(value==="owner"){
+
+    panel.innerHTML=`
+
+      <hr>
+
+      <h3>👑 Owner Admin</h3>
+
+      <p>
+        सभी दुकानों का management यहाँ रहेगा।
+      </p>
+
+      <ul>
+        <li>दुकान Approve</li>
+        <li>दुकान Block / Ban</li>
+        <li>Menu और Price Update</li>
+        <li>नया Business Approve</li>
+        <li>Order management</li>
+      </ul>
+
+      <button
+        class="save"
+        onclick="logoutPanel()">
+        Logout
+      </button>
+
+    `;
+
+  }else{
+
+    const shop=shops[Number(value)];
+
+    panel.innerHTML=`
+
+      <hr>
+
+      <h3>
+        🏪 ${esc(shop.name)}
+      </h3>
+
+      <p>
+        अभी यह demo shop panel है।
+      </p>
+
+      <p>
+        Production में दुकानदार को सिर्फ
+        अपनी दुकान का menu और price edit करने
+        की permission दी जाएगी।
+      </p>
+
+      <button
+        class="save"
+        onclick="logoutPanel()">
+        Logout
+      </button>
+
+    `;
+
+  }
+
+}
+
+
+function logoutPanel(){
+
+  document.getElementById("panel").innerHTML="";
+
+}
+
+
+/* =========================
+   BUSINESS FORM
+========================= */
+
+function openBusiness(){
+
+  document
+    .getElementById("businessModal")
+    .style.display="block";
+
+}
+
+
+function closeBusiness(){
+
+  document
+    .getElementById("businessModal")
+    .style.display="none";
+
+}
+
+
+function submitBusiness(){
+
+  const name=
+    document.getElementById("businessName")
+    .value.trim();
+
+  const owner=
+    document.getElementById("businessOwner")
+    .value.trim();
+
+  const mobile=
+    document.getElementById("businessMobile")
+    .value.trim();
+
+  const address=
+    document.getElementById("businessAddress")
+    .value.trim();
+
+  const category=
+    document.getElementById("businessCategory")
+    .value;
+
+  const menu=
+    document.getElementById("businessMenu")
+    .value.trim();
+
+  if(!name || !owner || !mobile || !address || !category){
+
+    alert("कृपया सभी जरूरी जानकारी भरें");
+
+    return;
+  }
+
+  let text=
+`🏪 New Business Request
+
+Business: ${name}
+Owner: ${owner}
+Mobile: ${mobile}
+Address: ${address}
+Category: ${category}
+
+Menu / Prices:
+${menu || "बाद में जोड़ेंगे।"}`;
+
+  alert(
+    "Business Request तैयार है।\n\n"+
+    "अभी Owner approval के लिए यह demo form है।"
+  );
+
+  console.log(text);
+
+  closeBusiness();
+
+}
+
+
+/* =========================
+   START APP
+========================= */
+
+renderTabs();
+render();
+updateCart();
+
+</script>
+
+</body>
+</html>
