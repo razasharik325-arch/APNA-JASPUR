@@ -1151,11 +1151,36 @@ ${menu || "बाद में जोड़ेंगे।"}`;
 /* =========================
    START APP
 ========================= */
+const GOOGLE_CLIENT_ID = "560574673647-fn6h4o117dkh78rbbgsliugsqchiiqfk.apps.googleusercontent.com";
 
 renderTabs();
 render();
 updateCart();
-  const GOOGLE_CLIENT_ID = "560574673647-fn6h4o117dkh78rbbgsliugsqchiiqfk.apps.googleusercontent.com";
+
+function handleGoogleLogin(response) {
+  alert("Google Login सफल हुआ!");
+  console.log(response.credential);
+}
+
+window.addEventListener("load", function () {
+  google.accounts.id.initialize({
+    client_id: GOOGLE_CLIENT_ID,
+    callback: handleGoogleLogin
+  });
+
+  google.accounts.id.renderButton(
+    document.getElementById("googleLogin"),
+    {
+      theme: "outline",
+      size: "large",
+      text: "signin_with"
+    }
+  );
+});
+
+
+
+
 
 </script>
 
