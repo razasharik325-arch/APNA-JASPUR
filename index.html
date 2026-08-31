@@ -1199,7 +1199,13 @@ window.addEventListener("load", function () {
     text: "signin_with"
   });
 });
-
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js")
+      .then(() => console.log("App ready"))
+      .catch(err => console.error("Service Worker error:", err));
+  });
+}
 
 
 
