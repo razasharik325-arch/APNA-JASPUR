@@ -943,7 +943,16 @@ Qty: ${x.qty}
 
   });
 
-  const grandTotal=foodTotal+30;
+  const distance =
+  Number(document.getElementById("distance").value) || 0;
+
+const delivery = 40 + (distance * 10);
+
+const tip =
+  Number(document.getElementById("tip").value) || 0;
+
+const grandTotal =
+  foodTotal + delivery + tip;
 
   message+=
 `Food Total: ₹${foodTotal}
