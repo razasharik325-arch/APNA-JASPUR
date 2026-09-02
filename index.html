@@ -1118,30 +1118,29 @@ function closeBusiness(){
 
 }
 
+async function submitBusiness(){
 
-function submitBusiness(){
-
-  const name=
+  const name =
     document.getElementById("businessName")
     .value.trim();
 
-  const owner=
+  const owner =
     document.getElementById("businessOwner")
     .value.trim();
 
-  const mobile=
+  const mobile =
     document.getElementById("businessMobile")
     .value.trim();
 
-  const address=
+  const address =
     document.getElementById("businessAddress")
     .value.trim();
 
-  const category=
+  const category =
     document.getElementById("businessCategory")
     .value;
 
-  const menu=
+  const menu =
     document.getElementById("businessMenu")
     .value.trim();
 
@@ -1152,28 +1151,171 @@ function submitBusiness(){
     return;
   }
 
-  let text=
-`🏪 New Business Request
+  const { data, error } =
+    await supabaseClient
+      .from("business_requests")
+      .insert([
+        {
+          business_name: name,
+          owner_name: owner,
+          mobile: mobile,
+          address: address,
+          category: category,
+          menu: menu,
+          status: "pending"
+        }
+      ])
+      .select();
 
-Business: ${name}
-Owner: ${owner}
-Mobile: ${mobile}
-Address: ${address}
-Category: ${category}
+  if(error){
 
-Menu / Prices:
-${menu || "बाद में जोड़ेंगे।"}`;
+    console.error("Business Request Error:", error);
+
+    alert(
+      "Business Request भेजने में समस्या हुई।\n\n" +
+      error.message
+    );
+
+    return;
+  }
+
+  async function submitBusiness(){
+
+  const name =
+    document.getElementById("businessName")
+    .value.trim();
+
+  const owner =
+    document.getElementById("businessOwner")
+    .value.trim();
+
+  const mobile =
+    document.getElementById("businessMobile")
+    .value.trim();
+
+  const address =
+    document.getElementById("businessAddress")
+    .value.trim();
+
+  const category =
+    document.getElementById("businessCategory")
+    .value;
+
+  const menu =
+    document.getElementById("businessMenu")
+    .value.trim();
+
+  if(!name || !owner || !mobile || !address || !category){
+
+    alert("कृपया सभी जरूरी जानकारी भरें");
+
+    return;
+  }
+
+  const { data, error } =
+    await supabaseClient
+      .from("business_requests")
+      .insert([
+        {
+          business_name: name,
+          owner_name: owner,
+          mobile: mobile,
+          address: address,
+          category: category,
+          menu: menu,
+          status: "pending"
+        }
+      ])
+      .select();
+
+  if(error){
+
+    console.error("Business Request Error:", error);
+
+    alert(
+      "Business Request भेजने में समस्या हुई।\n\n" +
+      error.message
+    );
+
+    return;
+  
+
+  async function submitBusiness(){
+
+  const name =
+    document.getElementById("businessName")
+    .value.trim();
+
+  const owner =
+    document.getElementById("businessOwner")
+    .value.trim();
+
+  const mobile =
+    document.getElementById("businessMobile")
+    .value.trim();
+
+  const address =
+    document.getElementById("businessAddress")
+    .value.trim();
+
+  const category =
+    document.getElementById("businessCategory")
+    .value;
+
+  const menu =
+    document.getElementById("businessMenu")
+    .value.trim();
+
+  if(!name || !owner || !mobile || !address || !category){
+
+    alert("कृपया सभी जरूरी जानकारी भरें");
+
+    return;
+  }
+
+  const { data, error } =
+    await supabaseClient
+      .from("business_requests")
+      .insert([
+        {
+          business_name: name,
+          owner_name: owner,
+          mobile: mobile,
+          address: address,
+          category: category,
+          menu: menu,
+          status: "pending"
+        }
+      ])
+      .select();
+
+  if(error){
+
+    console.error("Business Request Error:", error);
+
+    alert(
+      "Business Request भेजने में समस्या हुई।\n\n" +
+      error.message
+    );
+
+    return;
+  }
 
   alert(
-    "Business Request तैयार है।\n\n"+
-    "अभी Owner approval के लिए यह demo form है।"
+    "✅ Business Request सफलतापूर्वक भेज दी गई!\n\n" +
+    "Owner/Admin approval के बाद दुकान Live होगी।"
   );
-
-  console.log(text);
 
   closeBusiness();
 
 }
+
+/* =========================
+   SHOPKEEPER LOGIN
+========================= */
+    
+
+
 /* =========================
    SHOPKEEPER LOGIN
 ========================= */
@@ -1196,9 +1338,7 @@ function openShopkeeper(){
 
     alert("Google Login अभी तैयार नहीं है।");
 
-  }
 
-}
 
 /* =========================
    START APP
