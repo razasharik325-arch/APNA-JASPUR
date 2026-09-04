@@ -1194,7 +1194,29 @@ function closeBusiness(){
           menu: menu,
           status: "pending"
         }
-      
+            ])
+      .select();
+
+    if(error){
+
+      console.error("Business Request Error:", error);
+
+      alert(
+        "Business Request भेजने में समस्या हुई।\n\n" +
+        error.message
+      );
+
+      return;
+    }
+
+    alert(
+      "✅ Business Request सफलतापूर्वक भेज दी गई!\n\n" +
+      "Owner/Admin approval के बाद दुकान Live होगी।"
+    );
+
+    closeBusiness();
+
+  }
 
 /* =========================
    SHOPKEEPER LOGIN
