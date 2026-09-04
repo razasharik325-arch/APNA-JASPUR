@@ -1240,73 +1240,7 @@ async function submitBusiness(){
     return;
   
 
-  async function submitBusiness(){
-
-  const name =
-    document.getElementById("businessName")
-    .value.trim();
-
-  const owner =
-    document.getElementById("businessOwner")
-    .value.trim();
-
-  const mobile =
-    document.getElementById("businessMobile")
-    .value.trim();
-
-  const address =
-    document.getElementById("businessAddress")
-    .value.trim();
-
-  const category =
-    document.getElementById("businessCategory")
-    .value;
-
-  const menu =
-    document.getElementById("businessMenu")
-    .value.trim();
-
-  if(!name || !owner || !mobile || !address || !category){
-
-    alert("कृपया सभी जरूरी जानकारी भरें");
-
-    return;
-  }
-
-  const { data, error } =
-    await supabaseClient
-      .from("business_requests")
-      .insert([
-        {
-          business_name: name,
-          owner_name: owner,
-          mobile: mobile,
-          address: address,
-          category: category,
-          menu: menu,
-          status: "pending"
-        }
-      ])
-      .select();
-
-  if(error){
-
-    console.error("Business Request Error:", error);
-
-    alert(
-      "Business Request भेजने में समस्या हुई।\n\n" +
-      error.message
-    );
-
-    return;
-  }
-
-  alert(
-    "✅ Business Request सफलतापूर्वक भेज दी गई!\n\n" +
-    "Owner/Admin approval के बाद दुकान Live होगी।"
-  );
-
-  closeBusiness();
+  
 
 }
 
