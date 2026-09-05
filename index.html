@@ -777,44 +777,7 @@ function renderCart(){
 
   if(!cart.length){
 
-    box.innerHTML = `
-      <div class="empty">
-        🛒 Cart खाली है।
-        <br><br>
-        किसी item पर + Add दबाएँ।
-      </div>
-    `;
-
-    document.getElementById("foodTotal").textContent = "0";
-    document.getElementById("deliveryCharge").textContent = "0";
-    document.getElementById("grandTotal").textContent = "0";
-
-    return;
-  }
-
-  box.innerHTML = cart.map(item => `
-    <div class="cart-row">
-      <div>
-        <b>${esc(item.name)}</b>
-        <br>
-        ₹${item.price} × ${item.qty}
-      </div>
-
-      <div>
-        <button onclick="changeQty('${esc(item.name)}',-1)">−</button>
-        ${item.qty}
-        <button onclick="changeQty('${esc(item.name)}',1)">+</button>
-      </div>
-    </div>
-  `).join("");
-
-  const foodTotal = cart.reduce(
-    (sum,item) => sum + (item.price * item.qty), 0
-  );
-
-  document.getElementById("foodTotal").textContent = foodTotal;
-
-  updateDelivery();
+    
 }
 
 
