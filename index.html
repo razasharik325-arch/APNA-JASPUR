@@ -772,25 +772,7 @@ function openCart(){
    RENDER CART
 ========================= */
 
-function renderCart(){
 
-  const box=document.getElementById("cartItems");
-
-  if(!cart.length){
-
-    box.innerHTML=`
-      <div class="empty">
-        🛒 Cart खाली है।
-        <br><br>
-        किसी item पर + Add दबाएँ।
-      </div>
-    `;
-
-    document.getElementById("foodTotal").textContent="0";
-    document.getElementById("grandTotal").textContent="30";
-
-    return;
-  }
 
   let foodTotal=0;
 
