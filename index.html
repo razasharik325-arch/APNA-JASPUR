@@ -878,14 +878,13 @@ function sendOrder(){
     return;
   }
 
-  
-    const name =
-  document.getElementById("custName").value.trim();
+  const name =
+    document.getElementById("custName").value.trim();
 
-  const mobile=
+  const mobile =
     document.getElementById("custMobile").value.trim();
 
-  const address=
+  const address =
     document.getElementById("custAddress").value.trim();
 
   if(!name){
@@ -909,20 +908,20 @@ function sendOrder(){
     return;
   }
 
-  let foodTotal=0;
+  let foodTotal = 0;
 
-  let message=
+  let message =
 `🍴 Apna Jaspur Food Delivery Order
 
 `;
 
-  cart.forEach(x=>{
+  cart.forEach(x => {
 
-    const price=getPrice(x.price);
+    const price = getPrice(x.price);
 
-    foodTotal+=price*x.qty;
+    foodTotal += price * x.qty;
 
-    message+=
+    message +=
 `${x.shop}
 ${x.item}
 Price: ${x.price}
@@ -933,31 +932,29 @@ Qty: ${x.qty}
   });
 
   const distance =
-  Number(document.getElementById("distance").value) || 0;
+    Number(document.getElementById("distance").value) || 0;
 
-const delivery = 40 + (distance * 10);
+  const delivery =
+    40 + (distance * 10);
 
-const tip =
-  Number(document.getElementById("tip").value) || 0;
+  const tip =
+    Number(document.getElementById("tip").value) || 0;
 
-const grandTotal =
-  foodTotal + delivery + tip;
+  const grandTotal =
+    foodTotal + delivery + tip;
 
-  message+=
+  message +=
 `Food Total: ₹${foodTotal}
 Delivery: ₹${delivery}
+Tip: ₹${tip}
 TOTAL: ₹${grandTotal}
 
 Name: ${name}
 Mobile: ${mobile}
 Address: ${address}`;
 
-  /*
-    
-  */
-
-  const whatsappUrl=
-    "https://wa.me/?text="+
+  const whatsappUrl =
+    "https://wa.me/?text=" +
     encodeURIComponent(message);
 
   window.open(whatsappUrl, "_blank");
