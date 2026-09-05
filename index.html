@@ -1063,33 +1063,7 @@ function closeBusiness(){
 
 
 
-  const { data, error } =
-    await supabaseClient
-      .from("business_requests")
-      .insert([
-        {
-          business_name: name,
-          owner_name: owner,
-          mobile: mobile,
-          address: address,
-          category: category,
-          menu: menu,
-          status: "pending"
-        }
-      ])
-      .select();
-
-  if(error){
-
-    console.error("Business Request Error:", error);
-
-    alert(
-      "Business Request भेजने में समस्या हुई।\n\n" +
-      error.message
-    );
-
-    return;
-  }
+  
 
   async function submitBusiness(){
 
