@@ -818,60 +818,7 @@ function renderCart(){
 }
 
 
-  let foodTotal=0;
-
-  box.innerHTML=cart.map((x,index)=>{
-
-    const onePrice=getPrice(x.price);
-    const itemTotal=onePrice*x.qty;
-
-    foodTotal+=itemTotal;
-
-    return `
-      <div class="cart-row">
-
-        <b>${esc(x.item)}</b>
-
-        <br>
-
-        <small>${esc(x.shop)}</small>
-
-        <br>
-
-        <span>
-          ${esc(x.price)}
-        </span>
-
-        <div class="qty">
-
-          <button onclick="changeQty(${index},-1)">
-            −
-          </button>
-
-          <b>${x.qty}</b>
-
-          <button onclick="changeQty(${index},1)">
-            +
-          </button>
-
-          <button
-            class="remove"
-            onclick="removeItem(${index})">
-            हटाएँ
-          </button>
-
-        </div>
-
-      </div>
-    `;
-
-  }).join("");
-
-  document.getElementById("foodTotal").textContent=foodTotal;
-
-  document.getElementById("grandTotal").textContent=
-    foodTotal+30;
-}
+  
 
 
 /* =========================
