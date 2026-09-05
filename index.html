@@ -907,6 +907,27 @@ function sendOrder(){
 
     return;
   }
+  let t =
+  "Apna Jaspur Colorful Home Order\n\n";
+
+cart.forEach(x => {
+
+  t +=
+    x.shop + " - " +
+    x.item + " " +
+    x.price + "\n";
+
+});
+
+t +=
+  "\nDelivery ₹30\n" +
+  "Name: " + name + "\n" +
+  "Mobile: " + mobile + "\n" +
+  "Address: " + address;
+
+location.href =
+  "https://wa.me/?text=" +
+  encodeURIComponent(t);
 
   let foodTotal = 0;
 
