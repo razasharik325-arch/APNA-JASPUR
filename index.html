@@ -929,56 +929,7 @@ location.href =
   "https://wa.me/?text=" +
   encodeURIComponent(t);
 
-  let foodTotal = 0;
-
-  let message =
-`🍴 Apna Jaspur Food Delivery Order
-
-`;
-
-  cart.forEach(x => {
-
-    const price = getPrice(x.price);
-
-    foodTotal += price * x.qty;
-
-    message +=
-`${x.shop}
-${x.item}
-Price: ${x.price}
-Qty: ${x.qty}
-
-`;
-
-  });
-
-  const distance =
-    Number(document.getElementById("distance").value) || 0;
-
-  const delivery =
-    40 + (distance * 10);
-
-  const tip =
-    Number(document.getElementById("tip").value) || 0;
-
-  const grandTotal =
-    foodTotal + delivery + tip;
-
-  message +=
-`Food Total: ₹${foodTotal}
-Delivery: ₹${delivery}
-Tip: ₹${tip}
-TOTAL: ₹${grandTotal}
-
-Name: ${name}
-Mobile: ${mobile}
-Address: ${address}`;
-
-  const whatsappUrl =
-    "https://wa.me/?text=" +
-    encodeURIComponent(message);
-
-  window.open(whatsappUrl, "_blank");
+  
 }
 
 
