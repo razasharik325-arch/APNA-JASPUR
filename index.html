@@ -845,7 +845,42 @@ function updateCart(){
 
 
 function renderCart(){
+const box = document.getElementById("cartItems");
 
+if(!cart.length){
+  box.innerHTML = "🛒 Cart खाली है।";
+  document.getElementById("foodTotal").textContent = "0";
+  document.getElementById("grandTotal").textContent = "40";
+  return;
+}
+
+let foodTotal = 0;
+
+box.innerHTML = cart.map((x,index)=>{
+  const price = getPrice(x.price);
+  foodTotal += price * x.qty;
+
+  return `
+    <div class="cart-row">
+      <b>${esc(x.item)}</b><br>
+      <small>${esc(x.shop)}</small><br>
+      ₹${price} × ${x.qty}
+
+      <div class="qty">
+        <button onclick="changeQty(${index},-1)">−</button>
+        <b>${x.qty}</b>
+        <button onclick="changeQty(${index},1)">+</button>
+        <button onclick="removeItem(${index})">Remove</button>
+      </div>
+    </div>
+  `;
+}).join("");
+
+const delivery =
+  Number(document.getElementById("distance").value) || 40;
+
+document.getElementById("foodTotal").textContent = foodTotal;
+document.getElementById("grandTotal").textContent = foodTotal + delivery;
   
 
 
