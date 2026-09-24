@@ -1181,23 +1181,15 @@ function closeBusiness(){
 let shopkeeperLogin = false;
 
 function openShopkeeper(){
-
-  shopkeeperLogin = true;
-
   if(
     window.google &&
     google.accounts &&
     google.accounts.id
   ){
-
     google.accounts.id.prompt();
-
   }else{
-
     alert("Google Login अभी तैयार नहीं है।");
-
   }
-
 }
 
 
