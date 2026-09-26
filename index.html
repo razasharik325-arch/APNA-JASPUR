@@ -1241,6 +1241,28 @@ async function loadBusinessRequests(){
   `).join("");
 
 }
+
+  async function updateBusinessStatus(id, status){
+
+  const { error } =
+    await supabaseClient
+      .from("business_requests")
+      .update({ status: status })
+      .eq("id", id);
+
+  if(error){
+    alert("❌ Status update नहीं हुआ:\n" + error.message);
+    return;
+  }
+
+  alert(
+    status === "approved"
+      ? "✅ Business Approve हो गया।"
+      : "🚫 Business Block हो गया।"
+  );
+
+  loadBusinessRequests();
+}
     
 
 /* =========================
