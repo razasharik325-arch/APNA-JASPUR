@@ -1220,6 +1220,22 @@ async function loadBusinessRequests(){
       <p>
         <b>Status:</b> ${esc(r.status || "pending")}
       </p>
+<div style="margin-top:10px">
+
+  <button
+    class="save"
+    onclick="updateBusinessStatus('${r.id}','approved')">
+    ✅ Approve
+  </button>
+
+  <button
+    class="save"
+    onclick="updateBusinessStatus('${r.id}','blocked')">
+    🚫 Block
+  </button>
+
+</div>
+      
 
     </div>
   `).join("");
