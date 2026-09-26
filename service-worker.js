@@ -1,4 +1,4 @@
-const CACHE_NAME = "apna-jaspur-v1";
+const CACHE_NAME = "apna-jaspur-v2";
 
 const FILES_TO_CACHE = [
   "./",
