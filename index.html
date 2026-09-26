@@ -1276,12 +1276,34 @@ render();
 updateCart();
 
 function handleGoogleLogin(response) {
+
   if (response && response.credential) {
+
     localStorage.setItem("googleLogin", "true");
-    alert("Google Login सफल हुआ!");
+
+    document.getElementById("admin").style.display = "block";
+
+    const select =
+      document.getElementById("shopSelect");
+
+    select.innerHTML =
+      `<option value="owner">👑 Owner Admin</option>` +
+      shops.map((s,i) =>
+        `<option value="${i}">
+          ${esc(s.name)}
+        </option>`
+      ).join("");
+
+    select.value = "owner";
+
+    login();
+
   } else {
+
     alert("Google Login नहीं हो पाया।");
+
   }
+
 }
 
 window.addEventListener("load", function () {
