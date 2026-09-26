@@ -1134,21 +1134,39 @@ function closeBusiness(){
     return;
   }
 
-  const { data, error } =
-    await supabaseClient
-      .from("business_requests")
-      .insert([
-        {
-          business_name: name,
-          owner_name: owner,
-          mobile: mobile,
-          address: address,
-          category: category,
-          menu_text: menu,
-          status: "pending"
-        }
-            ])
-      .select();
+  const { error } =
+  await supabaseClient
+    .from("business_requests")
+    .insert([
+      {
+        business_name: name,
+        owner_name: owner,
+        mobile: mobile,
+        address: address,
+        category: category,
+        menu_text: menu,
+        status: "pending"
+      }
+    ]);
+
+if(error){
+
+  console.error("Business Request Error:", error);
+
+  alert(
+    "Business Request भेजने में समस्या हुई।\n\n" +
+    error.message
+  );
+
+  return;
+}
+
+alert(
+  "✅ Business Request सफलतापूर्वक भेज दी गई!\n\n" +
+  "Owner/Admin approval के बाद दुकान Live होगी।"
+);
+
+closeBusiness();
 
     if(error){
 
