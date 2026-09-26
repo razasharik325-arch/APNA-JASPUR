@@ -1180,6 +1180,55 @@ alert(
 closeBusiness();
     
 }
+async function loadBusinessRequests(){
+
+  const box = document.getElementById("requestList");
+
+  box.innerHTML = "⏳ Requests लोड हो रही हैं...";
+
+  const { data, error } =
+    await supabaseClient
+      .from("business_requests")
+      .select("*")
+      .order("created_at", { ascending:false });
+
+  if(error){
+    box.innerHTML =
+      "❌ Requests लोड नहीं हो सकीं।<br>" +
+      esc(error.message);
+    return;
+  }
+
+  if(!data || !data.length){
+    box.innerHTML = "📭 अभी कोई Business Request नहीं है।";
+    return;
+  }
+
+  box.innerHTML = data.map(r => `
+    <div class="shop" style="margin-top:12px">
+
+      <h3>🏪 ${esc(r.business_name || "")}</h3>
+
+      <p>👤 <b>मालिक:</b> ${esc(r.owner_name || "")}</p>
+
+      <p>📱 <b>मोबाइल:</b> ${esc(r.mobile || "")}</p>
+
+      <p>📍 <b>पता:</b> ${esc(r.address || "")}</p>
+
+      <p>🍴 <b>Category:</b> ${esc(r.category || "")}</p>
+
+      <p>📋 <b>Menu:</b><br>
+        ${esc(r.menu_text || "Menu नहीं दिया गया")}
+      </p>
+
+      <p>
+        <b>Status:</b> ${esc(r.status || "pending")}
+      </p>
+
+    </div>
+  `).join("");
+
+}
     
 
 /* =========================
