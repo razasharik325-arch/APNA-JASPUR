@@ -308,30 +308,26 @@ main{
 </div>
 
 
-<!-- LOGIN / ADMIN -->
+<!-- LOGIN / SHOPKEEPER PANEL -->
 <div id="admin">
   <div class="box">
 
     <button class="close" onclick="closeAdmin()">✕</button>
 
-    <h2>🔐 Owner / Shop Login</h2>
+    <h2>🏪 Shopkeeper Panel</h2>
 
     <div class="notice">
-      
+      Google Login सफल है। अपनी दुकान चुनें।
     </div>
 
     <select id="shopSelect"></select>
 
-    <input
-      id="pass"
-      type="password"
-      placeholder="Demo Password">
-
-    <button class="login" onclick="login()">
-      Login
-    </button>
-
     <div id="panel"></div>
+
+    <button
+      onclick="localStorage.removeItem('googleLogin'); closeAdmin();">
+      Logout
+    </button>
 
   </div>
 </div>
