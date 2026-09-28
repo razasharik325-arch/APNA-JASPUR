@@ -1256,7 +1256,90 @@ function openShopkeeper(){
   }
 
 }
+async function login(){
 
+  const panel =
+    document.getElementById("panel");
+
+  panel.innerHTML = `
+    <h3>👑 Owner Admin</h3>
+    <p>Business Requests लोड हो रही हैं...</p>
+  `;
+
+  const { data, error } =
+    await supabaseClient
+      .from("business_requests")
+      .select("*")
+      .order("created_at", { ascending:false });
+
+  if(error){
+
+    console.error("Admin Error:", error);
+
+    panel.innerHTML = `
+      <h3>👑 Owner Admin</h3>
+      <p style="color:red">
+        Requests लोड नहीं हुईं।
+      </p>
+    `;
+
+    return;
+  }
+
+  if(!data || data.length === 0){
+
+    panel.innerHTML = `
+      <h3>👑 Owner Admin</h3>
+      <p>अभी कोई Business Request नहीं है।</p>
+    `;
+
+    return;
+  }
+
+  panel.innerHTML = `
+    <h3>👑 Owner Admin</h3>
+    <h4>📥 Business Requests</h4>
+
+    ${data.map(r => `
+      <div style="
+        border:1px solid #ddd;
+        border-radius:12px;
+        padding:12px;
+        margin:10px 0;
+      ">
+
+        <b>🏪 ${r.business_name || ""}</b><br>
+        👤 Owner: ${r.owner_name || ""}<br>
+        📱 Mobile: ${r.mobile || ""}<br>
+        📍 Address: ${r.address || ""}<br>
+        🏷️ Category: ${r.category || ""}<br>
+        📝 Menu: ${r.menu_text || "नहीं दिया"}<br>
+        📌 Status: ${r.status || "pending"}
+
+        <br><br>
+
+        <button
+          class="save"
+          onclick="updateBusinessStatus('${r.id}','approved')">
+          ✅ Approve
+        </button>
+
+        <button
+          style="
+            background:#dc2626;
+            color:white;
+            border:0;
+            border-radius:18px;
+            padding:8px 13px;
+          "
+          onclick="updateBusinessStatus('${r.id}','blocked')">
+          ❌ Block
+        </button>
+
+      </div>
+    `).join("")}
+  `;
+}
 
 /* =========================
    START APP
