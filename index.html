@@ -994,52 +994,91 @@ function closeAdmin(){
 }
 
 
-function login(){
+async function login(){
 
-  const value=
-    document.getElementById("shopSelect").value;
-
-  const panel=
+  const panel =
     document.getElementById("panel");
 
-  if(value==="owner"){
+  panel.innerHTML = `
+    <h3>👑 Owner Admin</h3>
+    <p>Business Requests लोड हो रही हैं...</p>
+  `;
 
-    panel.innerHTML=`
+  const { data, error } =
+    await supabaseClient
+      .from("business_requests")
+      .select("*")
+      .order("created_at", { ascending:false });
 
-      <hr>
+  if(error){
 
+    console.error("Admin Error:", error);
+
+    panel.innerHTML = `
       <h3>👑 Owner Admin</h3>
-
-      <div id="businessRequests">
-  <h3>🔔 नई Business Requests</h3>
-  <p>Requests देखने के लिए नीचे Refresh दबाएँ।</p>
-
-  <button class="save" onclick="loadBusinessRequests()">
-    🔄 Requests Refresh
-  </button>
-
-  <div id="requestList"></div>
-</div>
-
-      <p>
-        सभी दुकानों का management यहाँ रहेगा।
+      <p style="color:red">
+        Requests लोड नहीं हुईं।
       </p>
-
-      <ul>
-        <li>दुकान Approve</li>
-        <li>दुकान Block / Ban</li>
-        <li>Menu और Price Update</li>
-        <li>नया Business Approve</li>
-        <li>Order management</li>
-      </ul>
-
-      <button
-        class="save"
-        onclick="logoutPanel()">
-        Logout
-      </button>
-
     `;
+
+    return;
+  }
+
+  if(!data || data.length === 0){
+
+    panel.innerHTML = `
+      <h3>👑 Owner Admin</h3>
+      <p>अभी कोई Business Request नहीं है।</p>
+      <button class="save" onclick="closeAdmin()">Close</button>
+    `;
+
+    return;
+  }
+
+  panel.innerHTML = `
+    <h3>👑 Owner Admin</h3>
+    <h4>📥 Business Requests</h4>
+
+    ${data.map(r => `
+      <div style="
+        border:1px solid #ddd;
+        border-radius:12px;
+        padding:12px;
+        margin:10px 0;
+      ">
+
+        <b>🏪 ${r.business_name || ""}</b><br>
+        👤 Owner: ${r.owner_name || ""}<br>
+        📱 Mobile: ${r.mobile || ""}<br>
+        📍 Address: ${r.address || ""}<br>
+        🏷️ Category: ${r.category || ""}<br>
+        📝 Menu: ${r.menu_text || "नहीं दिया"}<br>
+        📌 Status: ${r.status || "pending"}
+
+        <br><br>
+
+        <button
+          class="save"
+          onclick="approveBusiness('${r.id}')">
+          ✅ Approve
+        </button>
+
+        <button
+          style="
+            background:#dc2626;
+            color:white;
+            border:0;
+            border-radius:18px;
+            padding:8px 13px;
+          "
+          onclick="rejectBusiness('${r.id}')">
+          ❌ Reject
+        </button>
+
+      </div>
+    `).join("")}
+  `;
+}
 
   }else{
 
