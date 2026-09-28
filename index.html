@@ -1242,18 +1242,47 @@ function openShopkeeper(){
     google.accounts.id
   ){
 
+    const admin =
+      document.getElementById("admin");
+
+    admin.style.display = "block";
+
+    const select =
+      document.getElementById("shopSelect");
+
+    select.innerHTML = `
+      <option value="owner">👑 Owner Admin</option>
+    `;
+
+    const panel =
+      document.getElementById("panel");
+
+    panel.innerHTML = `
+      <h3>🔐 Google Login</h3>
+      <div id="googleButton"></div>
+    `;
+
     google.accounts.id.initialize({
       client_id: GOOGLE_CLIENT_ID,
       callback: handleGoogleLogin
     });
 
-    google.accounts.id.prompt();
+    google.accounts.id.renderButton(
+      document.getElementById("googleButton"),
+      {
+        theme: "outline",
+        size: "large",
+        text: "signin_with"
+      }
+    );
 
   }else{
 
     alert("Google Login अभी तैयार नहीं है।");
 
   }
+
+}
 
 }
 async function login(){
