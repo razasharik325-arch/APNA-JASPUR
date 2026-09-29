@@ -1108,10 +1108,11 @@ async function loadBusinessRequests(){
 
   if(error){
     box.innerHTML =
-      "❌ Requests लोड नहीं हो सकीं।<br>" +
-      esc(error.message);
+      "❌ Requests लोड नहीं हो सकीं।<br><br>" +
+      "<b>Error:</b> " + esc(error.message) +
+      "<br><br><b>Code:</b> " + esc(error.code || "");
     return;
-  }
+}
 
   if(!data || !data.length){
     box.innerHTML = "📭 अभी कोई Business Request नहीं है।";
