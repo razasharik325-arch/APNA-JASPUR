@@ -1353,6 +1353,7 @@ function handleGoogleLogin(response) {
   if (response && response.credential) {
 
     localStorage.setItem("googleLogin", "true");
+    login();
 
     document.getElementById("admin").style.display = "block";
     alert("Google Login सफल हुआ। Admin खोल रहे हैं...");
