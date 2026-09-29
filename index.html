@@ -1350,37 +1350,31 @@ updateCart();
 
 function handleGoogleLogin(response) {
 
-  if (response && response.credential) {
-
-    localStorage.setItem("googleLogin", "true");
-    login();
-
-    document.getElementById("admin").style.display = "block";
-    alert("Google Login सफल हुआ। Admin खोल रहे हैं...");
-
-    const select =
-      document.getElementById("shopSelect");
-
-    select.innerHTML =
-      `<option value="owner">👑 Owner Admin</option>` +
-      shops.map((s,i) =>
-        `<option value="${i}">
-          ${esc(s.name)}
-        </option>`
-      ).join("");
-
-    select.value = "owner";
-
-        login();
-  }
-}
-
-  } else {
-
+  if (!response || !response.credential) {
     alert("Google Login नहीं हो पाया।");
-
+    return;
   }
 
+  localStorage.setItem("googleLogin", "true");
+
+  document.getElementById("admin").style.display = "block";
+
+  const select =
+    document.getElementById("shopSelect");
+
+  select.innerHTML =
+    `<option value="owner">👑 Owner Admin</option>` +
+    shops.map((s,i) =>
+      `<option value="${i}">
+        ${esc(s.name)}
+      </option>`
+    ).join("");
+
+  select.value = "owner";
+
+  alert("Google Login सफल हुआ।");
+
+  login();
 }
 
 window.addEventListener("load", function () {
