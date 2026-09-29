@@ -1102,8 +1102,9 @@ async function loadBusinessRequests(){
   const { data, error } =
     await supabaseClient
       .from("business_requests")
-      .select("*")
-      .order("created_at", { ascending:false });
+.select("*")
+.eq("status", "pending")
+.order("created_at", { ascending:false });
 
   if(error){
     box.innerHTML =
