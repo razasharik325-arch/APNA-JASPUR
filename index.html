@@ -1269,12 +1269,16 @@ async function login(){
     panel.innerHTML = `
       <h3>👑 Owner Admin</h3>
       <p style="color:red">
-        Requests लोड नहीं हुईं।
+        ❌ Requests लोड नहीं हुईं।
+        <br><br>
+        <b>Error:</b> ${esc(error.message || "Unknown error")}
+        <br><br>
+        <b>Code:</b> ${esc(error.code || "No code")}
       </p>
     `;
 
     return;
-  }
+}
 
   if(!data || data.length === 0){
 
