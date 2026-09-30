@@ -709,12 +709,10 @@ function closeCart(){
    SEND WHATSAPP ORDER
 ========================= */
 
-function sendOrder(){
+async function sendOrder(){
 
   if(!cart.length){
-
     alert("पहले item Add करें");
-
     return;
   }
 
@@ -728,52 +726,82 @@ function sendOrder(){
     document.getElementById("custAddress").value.trim();
 
   if(!name){
-
     alert("कृपया अपना नाम लिखें");
-
     return;
   }
 
   if(!mobile){
-
     alert("कृपया मोबाइल नंबर लिखें");
-
     return;
   }
 
   if(!address){
-
     alert("कृपया डिलीवरी पता लिखें");
+    return;
+  }
+
+  const delivery =
+    Number(document.getElementById("distance").value) || 40;
+
+  let foodTotal = 0;
+
+  cart.forEach(x => {
+    foodTotal += getPrice(x.price) * x.qty;
+  });
+
+  const grandTotal = foodTotal + delivery;
+
+  const { error } =
+    await supabaseClient
+      .from("orders")
+      .insert([{
+        customer_name: name,
+        customer_mobile: mobile,
+        customer_address: address,
+        items: cart,
+        food_total: foodTotal,
+        delivery_charge: delivery,
+        grand_total: grandTotal,
+        status: "pending"
+      }]);
+
+  if(error){
+
+    console.error("Order Save Error:", error);
+
+    alert(
+      "❌ Order Save नहीं हुआ।\n\n" +
+      error.message
+    );
 
     return;
   }
-const delivery =
-  Number(document.getElementById("distance").value) || 40;
 
-  
   let t =
-  "Apna Jaspur Colorful Home Order\n\n";
+    "Apna Jaspur Colorful Home Order\n\n";
 
-cart.forEach(x => {
+  cart.forEach(x => {
+
+    t +=
+      x.shop + " - " +
+      x.item + " × " +
+      x.qty + " = ₹" +
+      (getPrice(x.price) * x.qty) +
+      "\n";
+
+  });
 
   t +=
-    x.shop + " - " +
-    x.item + " " +
-    x.price + "\n";
+    "\nFood Total ₹" + foodTotal +
+    "\nDelivery ₹" + delivery +
+    "\nGrand Total ₹" + grandTotal +
+    "\nName: " + name +
+    "\nMobile: " + mobile +
+    "\nAddress: " + address;
 
-});
-
-t +=
-  "\nDelivery ₹" + delivery + "\n" +
-  "Name: " + name + "\n" +
-  "Mobile: " + mobile + "\n" +
-  "Address: " + address;
-
-location.href =
-  "https://wa.me/?text=" +
-  encodeURIComponent(t);
-
-  
+  location.href =
+    "https://wa.me/?text=" +
+    encodeURIComponent(t);
 }
 
 
