@@ -1191,26 +1191,65 @@ function handleGoogleLogin(response) {
     return;
   }
 
-  localStorage.setItem("googleLogin", "true");
+  try {
 
-  document.getElementById("admin").style.display = "block";
+    const payload =
+      JSON.parse(
+        atob(
+          response.credential
+            .split(".")[1]
+            .replace(/-/g, "+")
+            .replace(/_/g, "/")
+        )
+      );
 
-  const select =
-    document.getElementById("shopSelect");
+    const email =
+      String(payload.email || "").toLowerCase();
 
-  select.innerHTML =
-    `<option value="owner">👑 Owner Admin</option>` +
-    shops.map((s,i) =>
-      `<option value="${i}">
-        ${esc(s.name)}
-      </option>`
-    ).join("");
+    const ownerEmail =
+      "razasharik325@gmail.com";
 
-  select.value = "owner";
+    if (email !== ownerEmail) {
 
-  alert("Google Login सफल हुआ।");
+      localStorage.removeItem("googleLogin");
 
-  login();
+      document.getElementById("admin").style.display = "none";
+
+      alert(
+        "यह Google Account Owner नहीं है।\n\n" +
+        "Owner Admin केवल Owner के Google Account से खुलेगा।"
+      );
+
+      return;
+    }
+
+    localStorage.setItem("googleLogin", "true");
+
+    document.getElementById("admin").style.display = "block";
+
+    const select =
+      document.getElementById("shopSelect");
+
+    select.innerHTML =
+      `<option value="owner">👑 Owner Admin</option>` +
+      shops.map((s,i) =>
+        `<option value="${i}">
+          ${esc(s.name)}
+        </option>`
+      ).join("");
+
+    select.value = "owner";
+
+    alert("Owner Google Login सफल हुआ।");
+
+    login();
+
+  } catch(error) {
+
+    console.error("Google Login Error:", error);
+
+    alert("Google Login verify नहीं हो पाया।");
+  }
 }
 
 window.addEventListener("load", function () {
