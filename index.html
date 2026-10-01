@@ -908,14 +908,15 @@ function closeBusiness(){
       .from("business_requests")
       .insert([
         {
-          business_name: name,
-          owner_name: owner,
-          mobile: mobile,
-          address: address,
-          category: category,
-          menu_text: menu,
-          status: "pending"
-        }
+  business_name: name,
+  owner_name: owner,
+  mobile: mobile,
+  address: address,
+  category: category,
+  menu_text: menu,
+  email: localStorage.getItem("userEmail"),
+  status: "pending"
+}
       ]);
     if(error){
 
