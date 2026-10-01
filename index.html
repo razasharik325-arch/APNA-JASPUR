@@ -245,6 +245,25 @@ main{
 
 <nav class="tabs" id="tabs"></nav>
 
+<div style="padding:10px;background:#fff;">
+  <input
+    id="shopSearch"
+    type="search"
+    placeholder="🔍 दुकान का नाम खोजें..."
+    oninput="searchShops()"
+    style="
+      width:100%;
+      padding:12px 15px;
+      border:1px solid #ddd;
+      border-radius:25px;
+      font-size:15px;
+      outline:none;
+    "
+  >
+</div>
+
+<main id="app"></main>
+
 <main id="app"></main>
 
 <button class="businessBtn" onclick="openBusiness()">
@@ -454,8 +473,9 @@ function renderTabs(){
 function render(list=shops){
 
   const app=document.getElementById("app");
-
-  app.innerHTML=list.map((s,si)=>`
+app.innerHTML=list.map((s,si)=>{
+  const realShopIndex=shops.indexOf(s);
+  return `
 
     <section class="shop">
 
