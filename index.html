@@ -1337,17 +1337,30 @@ function handleGoogleLogin(response) {
 
     if (email !== ownerEmail) {
 
-      localStorage.removeItem("googleLogin");
+  localStorage.setItem("googleLogin", "true");
 
-      document.getElementById("admin").style.display = "none";
+  document.getElementById("admin").style.display = "block";
 
-      alert(
-        "यह Google Account Owner नहीं है।\n\n" +
-        "Owner Admin केवल Owner के Google Account से खुलेगा।"
-      );
+  const select =
+    document.getElementById("shopSelect");
 
-      return;
-    }
+  select.innerHTML =
+    `<option value="">🏪 अपनी दुकान चुनें</option>` +
+    shops.map((s,i) =>
+      `<option value="${i}">
+        ${esc(s.name)}
+      </option>`
+    ).join("");
+
+  select.value = "";
+
+  document.getElementById("panel").innerHTML = `
+    <h3>🏪 Shopkeeper Panel</h3>
+    <p>अपनी दुकान चुनें।</p>
+  `;
+
+  return;
+}
 
     localStorage.setItem("googleLogin", "true");
 
