@@ -1310,7 +1310,7 @@ renderTabs();
 render();
 updateCart();
 
-function handleGoogleLogin(response) {
+async function handleGoogleLogin(response) {
 
   if (!response || !response.credential) {
     alert("Google Login नहीं हो पाया।");
@@ -1330,58 +1330,122 @@ function handleGoogleLogin(response) {
       );
 
     const email =
-      String(payload.email || "").toLowerCase();
+      String(payload.email || "").toLowerCase().trim();
 
-    const ownerEmail =
-      "razasharik325@gmail.com";
+    if (!email) {
+      alert("Google Email नहीं मिला।");
+      return;
+    }
 
-    if (email !== ownerEmail) {
+    const { data, error } =
+      await supabaseClient
+        .from("user_roles")
+        .select("*")
+        .eq("email", email)
+        .maybeSingle();
 
-  localStorage.setItem("googleLogin", "true");
+    if (error) {
 
-  document.getElementById("admin").style.display = "block";
+      console.error("Role Load Error:", error);
 
-  const select =
-    document.getElementById("shopSelect");
+      alert(
+        "❌ Login Role नहीं मिल सकी।\n\n" +
+        error.message
+      );
 
-  select.innerHTML =
-    `<option value="">🏪 अपनी दुकान चुनें</option>` +
-    shops.map((s,i) =>
-      `<option value="${i}">
-        ${esc(s.name)}
-      </option>`
-    ).join("");
+      return;
+    }
 
-  select.value = "";
+    if (!data) {
 
-  document.getElementById("panel").innerHTML = `
-    <h3>🏪 Shopkeeper Panel</h3>
-    <p>अपनी दुकान चुनें।</p>
-  `;
+      alert(
+        "Google Login सफल हुआ।\n\n" +
+        "इस Gmail को अभी कोई Role नहीं दिया गया है।"
+      );
 
-  return;
-}
+      return;
+    }
 
     localStorage.setItem("googleLogin", "true");
+    localStorage.setItem("userEmail", email);
+    localStorage.setItem("userRole", data.role);
 
     document.getElementById("admin").style.display = "block";
 
     const select =
       document.getElementById("shopSelect");
 
-    select.innerHTML =
-      `<option value="owner">👑 Owner Admin</option>` +
-      shops.map((s,i) =>
-        `<option value="${i}">
-          ${esc(s.name)}
-        </option>`
-      ).join("");
+    const panel =
+      document.getElementById("panel");
 
-    select.value = "owner";
 
-    alert("Owner Google Login सफल हुआ।");
+    /* =========================
+       OWNER
+    ========================= */
 
-    login();
+    if (data.role === "owner") {
+
+      select.innerHTML =
+        `<option value="owner">👑 Owner Admin</option>`;
+
+      select.value = "owner";
+
+      alert("👑 Owner Login सफल हुआ।");
+
+      login();
+
+      return;
+    }
+
+
+    /* =========================
+       SHOPKEEPER
+    ========================= */
+
+    if (data.role === "shopkeeper") {
+
+      select.innerHTML =
+        `<option value="">🏪 ${esc(data.shop_name || "अपनी दुकान")}</option>`;
+
+      panel.innerHTML = `
+        <h3>🏪 Shopkeeper Panel</h3>
+
+        <p>
+          <b>दुकान:</b>
+          ${esc(data.shop_name || "दुकान निर्धारित नहीं है")}
+        </p>
+
+        <p>Google Login सफल हुआ।</p>
+      `;
+
+      return;
+    }
+
+
+    /* =========================
+       DELIVERY BOY
+    ========================= */
+
+    if (data.role === "delivery") {
+
+      select.innerHTML =
+        `<option value="delivery">🚴 Delivery Boy</option>`;
+
+      panel.innerHTML = `
+        <h3>🚴 Delivery Panel</h3>
+
+        <p>Google Login सफल हुआ।</p>
+
+        <p>
+          Delivery Orders यहाँ दिखाई जाएँगे।
+        </p>
+      `;
+
+      return;
+    }
+
+
+    alert("इस Gmail की Role सही नहीं है।");
 
   } catch(error) {
 
