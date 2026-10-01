@@ -1004,6 +1004,18 @@ async function loadBusinessRequests(){
 
   async function updateBusinessStatus(id, status){
 
+  const { data: request, error: requestError } =
+    await supabaseClient
+      .from("business_requests")
+      .select("email, business_name")
+      .eq("id", id)
+      .maybeSingle();
+
+  if(requestError){
+    alert("❌ Request नहीं मिली:\n" + requestError.message);
+    return;
+  }
+
   const { error } =
     await supabaseClient
       .from("business_requests")
@@ -1015,13 +1027,37 @@ async function loadBusinessRequests(){
     return;
   }
 
+  if(status === "approved" && request && request.email){
+
+    const { error: roleError } =
+      await supabaseClient
+        .from("user_roles")
+        .upsert({
+          email: request.email.toLowerCase().trim(),
+          role: "shopkeeper",
+          shop_name: request.business_name
+        }, {
+          onConflict: "email"
+        });
+
+    if(roleError){
+      alert(
+        "⚠️ Business Approve हो गया,\n" +
+        "लेकिन Shopkeeper Role नहीं बना।\n\n" +
+        roleError.message
+      );
+      return;
+    }
+  }
+
   alert(
     status === "approved"
-      ? "✅ Business Approve हो गया।"
+      ? "✅ Business Approve हो गया और Shopkeeper Role बन गया।"
       : "🚫 Business Block हो गया।"
   );
 
   loadBusinessRequests();
+  loadApprovedBusinesses();
 }
     
 
