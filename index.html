@@ -1172,6 +1172,60 @@ async function login(){
     `).join("")}
   `;
 }
+async function loadOrders(){
+
+  const panel = document.getElementById("panel");
+
+  const { data, error } =
+    await supabaseClient
+      .from("orders")
+      .select("*")
+      .order("created_at", { ascending:false });
+
+  if(error){
+
+    panel.innerHTML += `
+      <p style="color:red">
+        ❌ Orders लोड नहीं हुए।
+        <br>${esc(error.message || "Unknown error")}
+      </p>
+    `;
+
+    return;
+  }
+
+  if(!data || !data.length){
+
+    panel.innerHTML += `
+      <h4>📦 Orders</h4>
+      <p>अभी कोई Order नहीं है।</p>
+    `;
+
+    return;
+  }
+
+  panel.innerHTML += `
+    <h4>📦 Orders</h4>
+
+    ${data.map(o => `
+      <div style="
+        border:1px solid #ddd;
+        border-radius:12px;
+        padding:12px;
+        margin:10px 0;
+      ">
+
+        <b>👤 ${esc(o.customer_name || "")}</b><br>
+        📱 ${esc(o.customer_mobile || "")}<br>
+        📍 ${esc(o.customer_address || "")}<br>
+        💰 Total: ₹${esc(o.grand_total || 0)}<br>
+        📌 Status: ${esc(o.status || "pending")}
+
+      </div>
+    `).join("")}
+  `;
+}
+  
   /* =========================
    LOAD APPROVED BUSINESSES
 ========================= */
