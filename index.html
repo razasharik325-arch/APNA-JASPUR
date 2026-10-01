@@ -791,7 +791,21 @@ async function sendOrder(){
 
   });
 
-  t +=
+  const now = new Date();
+
+const orderDate =
+  now.toLocaleDateString("en-IN");
+
+const orderTime =
+  now.toLocaleTimeString("en-IN", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true
+  });
+
+t +=
+    "\n📅 Date: " + orderDate +
+    "\n🕒 Time: " + orderTime +
     "\nFood Total ₹" + foodTotal +
     "\nDelivery ₹" + delivery +
     "\nGrand Total ₹" + grandTotal +
