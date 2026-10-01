@@ -1356,6 +1356,7 @@ const supabaseClient =
     SUPABASE_URL,
     SUPABASE_KEY
   );
+  loadApprovedBusinesses();
 async function enableNotifications(){
 
   if(!("Notification" in window)){
