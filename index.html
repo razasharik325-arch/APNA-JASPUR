@@ -1330,12 +1330,15 @@ async function handleGoogleLogin(response) {
       );
 
     const email =
-      String(payload.email || "").toLowerCase().trim();
+  String(payload.email || "").toLowerCase().trim();
 
-    if (!email) {
-      alert("Google Email नहीं मिला।");
-      return;
-    }
+if (!email) {
+  alert("Google Email नहीं मिला।");
+  return;
+}
+
+localStorage.setItem("googleLogin", "true");
+localStorage.setItem("userEmail", email);
 
     const { data, error } =
       await supabaseClient
