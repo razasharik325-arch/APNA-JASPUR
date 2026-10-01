@@ -1172,6 +1172,79 @@ async function login(){
     `).join("")}
   `;
 }
+  /* =========================
+   LOAD APPROVED BUSINESSES
+========================= */
+
+async function loadApprovedBusinesses(){
+
+  const { data, error } =
+    await supabaseClient
+      .from("business_requests")
+      .select("*")
+      .eq("status","approved")
+      .order("created_at",{ascending:false});
+
+  if(error){
+
+    console.error("Approved Business Load Error:",error);
+
+    return;
+  }
+
+  if(!data || !data.length){
+
+    renderTabs();
+    render();
+    return;
+  }
+
+  data.forEach(r => {
+
+    const lines =
+      String(r.menu_text || "")
+      .split(/\n+/)
+      .map(x => x.trim())
+      .filter(Boolean);
+
+    const items = lines.map(line => {
+
+      const match =
+        line.match(/(.+?)[\s:-]+₹?\s*(\d+(?:\.\d+)?)/);
+
+      if(match){
+
+        return {
+          name: match[1].trim(),
+          price: "₹" + match[2]
+        };
+
+      }
+
+      return {
+        name: line,
+        price: ""
+      };
+
+    });
+
+    shops.push({
+      name: r.business_name || "New Business",
+      cat: r.category || "Other",
+      address: r.address || "",
+      items: items.length
+        ? items
+        : [{
+            name: "Menu जल्द जोड़ा जाएगा",
+            price: ""
+          }]
+    });
+
+  });
+
+  renderTabs();
+  render();
+}
 
 /* =========================
    START APP
