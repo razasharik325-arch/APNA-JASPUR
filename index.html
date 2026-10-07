@@ -1334,15 +1334,22 @@ async function loadApprovedBusinesses(){
 
   if(error){
 
-    console.error("Approved Business Load Error:",error);
+    console.error("Approved Business Load Error:", error);
+
+    alert("❌ Business load नहीं हुआ:\n" + error.message);
 
     return;
   }
+
+  console.log("Approved Businesses:", data);
+
+  shops.length = 0;
 
   if(!data || !data.length){
 
     renderTabs();
     render();
+
     return;
   }
 
@@ -1376,21 +1383,27 @@ async function loadApprovedBusinesses(){
     });
 
     shops.push({
+
       name: r.business_name || "New Business",
+
       cat: r.category || "Other",
+
       address: r.address || "",
+
       items: items.length
         ? items
         : [{
             name: "Menu जल्द जोड़ा जाएगा",
             price: ""
           }]
+
     });
 
   });
 
   renderTabs();
   render();
+
 }
 
 /* =========================
