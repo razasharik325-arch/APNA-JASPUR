@@ -532,6 +532,28 @@ function filterCat(category,button){
     render(shops.filter(s=>s.cat===category));
   }
 }
+  function searchShops(){
+
+  const input =
+    document.getElementById("shopSearch");
+
+  const text =
+    input.value.trim().toLowerCase();
+
+  if(!text){
+    render(shops);
+    return;
+  }
+
+  const result =
+    shops.filter(shop =>
+      String(shop.name || "")
+        .toLowerCase()
+        .includes(text)
+    );
+
+  render(result);
+}
 
 
 /* =========================
