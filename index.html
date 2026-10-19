@@ -933,71 +933,87 @@ function closeBusiness(){
 
   
 
-  
+  async function submitBusiness() {
 
-  async function submitBusiness(){
+  const name = document.getElementById("businessName").value.trim();
+  const owner = document.getElementById("businessOwner").value.trim();
+  const mobile = document.getElementById("businessMobile").value.trim();
+  const address = document.getElementById("businessAddress").value.trim();
+  const category = document.getElementById("businessCategory").value;
+  const menu = document.getElementById("businessMenu").value.trim();
 
-  const name =
-    document.getElementById("businessName")
-    .value.trim();
-
-  const owner =
-    document.getElementById("businessOwner")
-    .value.trim();
-
-  const mobile =
-    document.getElementById("businessMobile")
-    .value.trim();
-
-  const address =
-    document.getElementById("businessAddress")
-    .value.trim();
-
-  const category =
-    document.getElementById("businessCategory")
-    .value;
-
-  const menu =
-    document.getElementById("businessMenu")
-    .value.trim();
-
-  if(!name || !owner || !mobile || !address || !category){
-
-    alert("कृपया सभी जरूरी जानकारी भरें");
-
+  if (!name || !owner || !mobile || !address || !category) {
+    alert("कृपया दुकान का नाम, मालिक का नाम, मोबाइल नंबर, पता और Category भरें।");
     return;
   }
 
-  const { error } =
-    await supabaseClient
+  if (!/^[0-9]{10}$/.test(mobile)) {
+    alert("कृपया 10 अंकों का सही मोबाइल नंबर लिखें।");
+    return;
+  }
+
+  const button = document.querySelector(
+    '#businessModal button[onclick="submitBusiness()"]'
+  );
+
+  if (button && button.disabled) {
+    return;
+  }
+
+  if (button) {
+    button.disabled = true;
+    button.textContent = "⏳ Request भेजी जा रही है...";
+  }
+
+  try {
+    const email = localStorage.getItem("userEmail");
+
+    const { error } = await supabaseClient
       .from("business_requests")
-      .insert([
-        {
-  business_name: name,
-  owner_name: owner,
-  mobile: mobile,
-  address: address,
-  category: category,
-  menu_text: menu,
-  email: localStorage.getItem("userEmail"),
-  status: "pending"
-}
-      ]);
-    if(error){
+      .insert([{
+        business_name: name,
+        owner_name: owner,
+        mobile: mobile,
+        address: address,
+        category: category,
+        menu_text: menu,
+        email: email || null,
+        status: "pending"
+      }]);
 
-  console.error("Business Submit Error:", error);
+    if (error) {
+      console.error("Business Submit Error:", error);
+      alert("❌ Business Submit नहीं हुआ:\n" + error.message);
+      return;
+    }
 
-  alert("Submit नहीं हुआ: " + error.message);
+    alert(
+      "✅ Business Request सफलतापूर्वक भेज दी गई!\n\n" +
+      "Owner Approval के बाद आपकी दुकान Live होगी।"
+    );
 
-  return;
+    document.getElementById("businessName").value = "";
+    document.getElementById("businessOwner").value = "";
+    document.getElementById("businessMobile").value = "";
+    document.getElementById("businessAddress").value = "";
+    document.getElementById("businessCategory").value = "";
+    document.getElementById("businessMenu").value = "";
+
+    closeBusiness();
+
+  } catch (error) {
+    console.error("Business Submit Error:", error);
+    alert("❌ समस्या आ गई:\n" + error.message);
+
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.textContent = "📤 Business Submit करें";
+    }
+  }
 }
 
   
-
-  alert("आपका Business Request सफलतापूर्वक भेज दिया गया है।");
-
-  closeBusiness();
-}
 
 async function loadBusinessRequests(){
 
