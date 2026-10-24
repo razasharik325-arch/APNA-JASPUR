@@ -479,48 +479,50 @@ function renderTabs(){
    SHOP RENDER
 ========================= */
 
-function render(list=shops){
+function render(list = shops) {
 
-  const app=document.getElementById("app");
-app.innerHTML=list.map((s,si)=>{
-  const realShopIndex=shops.indexOf(s);
-  return `
+  const app = document.getElementById("app");
 
-    <section class="shop">
+  app.innerHTML = list.map((s, si) => {
 
-      <h2>${esc(s.name)}</h2>
+    const realShopIndex = shops.indexOf(s);
 
-      ${s.address
-        ? `<small>📍 ${esc(s.address)}</small>`
-        : ""}
+    return `
+      <section class="shop">
 
-      ${s.items.map((x,ii)=>`
+        <h2>${esc(s.name)}</h2>
 
-        <div class="item">
+        ${s.address
+          ? `<small>📍 ${esc(s.address)}</small>`
+          : ""}
 
-          <span>
-            <span class="item-name">
-              ${esc(x.name)}
+        ${s.items.map((x, ii) => `
+          <div class="item">
+
+            <span>
+              <span class="item-name">
+                ${esc(x.name)}
+              </span>
+              <br>
+              <span class="price">
+                ${esc(x.price)}
+              </span>
             </span>
-            <br>
-            <span class="price">
-              ${esc(x.price)}
-            </span>
-          </span>
 
-          <button
-            class="add"
-            onclick="addItem(${realShopIndex},${ii})">
-            + Add
-          </button>
+            <button
+              class="add"
+              onclick="addItem(${realShopIndex}, ${ii})">
+              + Add
+            </button>
 
-        </div>
+          </div>
+        `).join("")}
 
-      `).join("")}
+      </section>
+    `;
 
-    </section>
+  }).join("");
 
-  `).join("");
 }
 
 
