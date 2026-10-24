@@ -914,19 +914,28 @@ function logoutPanel(){
 
 function openBusiness(){
 
-  document
-    .getElementById("businessModal")
-    .style.display="block";
+  const modal = document.getElementById("businessModal");
 
+  if (!modal) {
+    alert("❌ Business Form नहीं मिला।");
+    return;
+  }
+
+  modal.style.display = "block";
+  document.body.style.overflow = "hidden";
+
+  console.log("Business Form Opened");
 }
-
 
 function closeBusiness(){
 
-  document
-    .getElementById("businessModal")
-    .style.display="none";
+  const modal = document.getElementById("businessModal");
 
+  if (modal) {
+    modal.style.display = "none";
+  }
+
+  document.body.style.overflow = "";
 }
 
 
