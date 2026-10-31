@@ -914,7 +914,7 @@ function logoutPanel(){
    BUSINESS FORM
 ========================= */
 
-function openBusiness(){
+async function openBusiness(){
 
   const modal = document.getElementById("businessModal");
 
@@ -926,18 +926,19 @@ function openBusiness(){
   modal.style.display = "block";
   document.body.style.overflow = "hidden";
 
-  console.log("Business Form Opened");
-}
+  const { data: { session }, error } =
+    await supabaseClient.auth.getSession();
 
-function closeBusiness(){
-
-  const modal = document.getElementById("businessModal");
-
-  if (modal) {
-    modal.style.display = "none";
+  if (error) {
+    alert("Login जाँचने में समस्या: " + error.message);
+    return;
   }
 
-  document.body.style.overflow = "";
+  if (session && session.user) {
+    showBusinessForm();
+  } else {
+    showBusinessLogin();
+  }
 }
 
 
