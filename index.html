@@ -368,6 +368,20 @@ const supabaseClient =
     <button class="close" onclick="closeBusiness()">✕</button>
 
     <h2>🏪 अपना Business Add करें</h2>
+<div id="businessAuthGate">
+  <div class="notice">
+    🔐 Business Add करने के लिए Gmail Login जरूरी है।
+  </div>
+
+  <button class="business"
+    style="width:100%;padding:13px"
+    onclick="businessGoogleLogin()">
+    Continue with Google
+  </button>
+</div>
+
+<div id="businessFormFields" style="display:none">
+    
 
     <div class="notice">
       अपना business भेजें। पहले Owner approval होगा, उसके बाद दुकान live की जाएगी।
