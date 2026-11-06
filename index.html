@@ -959,7 +959,8 @@ async function openBusiness(){
 
   
 
-  async function submitBusiness() {
+  
+async function submitBusiness() {
 
   const name = document.getElementById("businessName").value.trim();
   const owner = document.getElementById("businessOwner").value.trim();
@@ -969,12 +970,12 @@ async function openBusiness(){
   const menu = document.getElementById("businessMenu").value.trim();
 
   if (!name || !owner || !mobile || !address || !category) {
-    alert("कृपया दुकान का नाम, मालिक का नाम, मोबाइल नंबर, पता और Category भरें।");
+    alert("कृपया सभी जरूरी जानकारी भरें।");
     return;
   }
 
   if (!/^[0-9]{10}$/.test(mobile)) {
-    alert("कृपया 10 अंकों का सही मोबाइल नंबर लिखें।");
+    alert("10 अंकों का सही मोबाइल नंबर लिखें।");
     return;
   }
 
@@ -982,9 +983,7 @@ async function openBusiness(){
     '#businessModal button[onclick="submitBusiness()"]'
   );
 
-  if (button && button.disabled) {
-    return;
-  }
+  if (button && button.disabled) return;
 
   if (button) {
     button.disabled = true;
@@ -992,8 +991,20 @@ async function openBusiness(){
   }
 
   try {
-    const email = localStorage.getItem("userEmail");
 
+    // असली Supabase Login पहचान जाँचें
+    const { data, error: authError } =
+      await supabaseClient.auth.getUser();
+
+    if (authError || !data.user) {
+      alert("पहले अपने Gmail से Google Login करें।");
+      showBusinessLogin();
+      return;
+    }
+
+    const user = data.user;
+
+    // दुकान को दुकानदार की पहचान से लिंक करें
     const { error } = await supabaseClient
       .from("business_requests")
       .insert([{
@@ -1003,19 +1014,17 @@ async function openBusiness(){
         address: address,
         category: category,
         menu_text: menu,
-        email: email || null,
+        email: user.email,
+        user_id: user.id,
         status: "pending"
       }]);
 
-    if (error) {
-      console.error("Business Submit Error:", error);
-      alert("❌ Business Submit नहीं हुआ:\n" + error.message);
-      return;
-    }
+    if (error) throw error;
 
     alert(
       "✅ Business Request सफलतापूर्वक भेज दी गई!\n\n" +
-      "Owner Approval के बाद आपकी दुकान Live होगी।"
+      "आपकी Gmail पहचान सुरक्षित रूप से जुड़ गई है।\n" +
+      "Owner Approval के बाद दुकान Live होगी।"
     );
 
     document.getElementById("businessName").value = "";
@@ -1029,7 +1038,7 @@ async function openBusiness(){
 
   } catch (error) {
     console.error("Business Submit Error:", error);
-    alert("❌ समस्या आ गई:\n" + error.message);
+    alert("❌ समस्या:\n" + error.message);
 
   } finally {
     if (button) {
@@ -1038,6 +1047,7 @@ async function openBusiness(){
     }
   }
 }
+
 
   
 
