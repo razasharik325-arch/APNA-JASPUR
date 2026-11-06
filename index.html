@@ -1323,6 +1323,12 @@ async function login(){
         🏷️ Category: ${r.category || ""}<br>
         📝 Menu: ${r.menu_text || "नहीं दिया"}<br>
         📌 Status: ${r.status || "pending"}
+        <br>
+📅 दुकान जोड़ी:
+${formatDateTime(r.created_at)}
+<br>
+✅ Approved:
+${formatDateTime(r.approved_at)}
 
         <br><br>
 
