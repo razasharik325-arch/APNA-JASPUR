@@ -1403,6 +1403,9 @@ async function loadOrders(){
         📍 ${esc(o.customer_address || "")}<br>
         💰 Total: ₹${esc(o.grand_total || 0)}<br>
         📌 Status: ${esc(o.status || "pending")}
+        <br>
+📅 Order की तारीख:
+<b>${formatDateTime(o.created_at)}</b><br>
 
       </div>
     `).join("")}
