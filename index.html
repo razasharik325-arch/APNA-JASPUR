@@ -1111,6 +1111,14 @@ async function loadBusinessRequests(){
       <p>
         <b>Status:</b> ${esc(r.status || "pending")}
       </p>
+
+      <p>📅 दुकान जोड़ने की तारीख:
+  <b>${formatDateTime(r.created_at)}</b>
+</p>
+
+<p>✅ Approval का समय:
+  <b>${formatDateTime(r.approved_at)}</b>
+</p>
 <div style="margin-top:10px">
 
   <button
