@@ -1421,6 +1421,8 @@ async function loadOrders(){
         <br>
 📅 Order की तारीख:
 <b>${formatDateTime(o.created_at)}</b><br>
+⏳ ऑर्डर आया:
+<b>${timeAgo(o.created_at)}</b><br>
 
       </div>
     `).join("")}
