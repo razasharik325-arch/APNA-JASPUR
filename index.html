@@ -985,6 +985,21 @@ async function openBusiness(){
 }
 
 
+async function businessGoogleLogin() {
+
+  const { error } = await supabaseClient.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: window.location.origin
+    }
+  });
+
+  if (error) {
+    alert("Google Login Error: " + error.message);
+  }
+
+}
+
 
   
 
