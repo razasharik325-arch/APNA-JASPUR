@@ -957,6 +957,21 @@ function logoutPanel(){
 /* =========================
    BUSINESS FORM
 ========================= */
+function showBusinessLogin(){
+  document.getElementById("businessAuthGate").style.display = "block";
+  document.getElementById("businessFormFields").style.display = "none";
+}
+
+function showBusinessForm(){
+  document.getElementById("businessAuthGate").style.display = "none";
+  document.getElementById("businessFormFields").style.display = "block";
+}
+
+function closeBusiness(){
+  document.getElementById("businessModal").style.display = "none";
+  document.body.style.overflow = "";
+}
+  
 
 async function openBusiness(){
 
